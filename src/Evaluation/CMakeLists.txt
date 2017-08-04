@@ -3,4 +3,4 @@ add_library(Evaluation
 			)
 			
 			
-INSTALL(TARGETS Evaluation DESTINATION lib/RSI/Evaluation)
+INSTALL(TARGETS Evaluation DESTINATION lib/maoris/Evaluation)

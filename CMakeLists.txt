@@ -57,9 +57,9 @@ add_custom_target(uninstall
 ## Installing the files
 
 FILE(GLOB files "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
-# FILE(GLOB files_hung "${CMAKE_CURRENT_SOURCE_DIR}/include/hungarian/*.h")
+FILE(GLOB files_hung "${CMAKE_CURRENT_SOURCE_DIR}/include/Evaluation/*.hpp")
 INSTALL(FILES ${files} DESTINATION include/maoris)
-# INSTALL(FILES ${files_hung} DESTINATION include/RSI/hungarian)
+INSTALL(FILES ${files_hung} DESTINATION include/maoris/Evaluation)
 INSTALL(FILES maoris-config.cmake DESTINATION lib/maoris)
 
 

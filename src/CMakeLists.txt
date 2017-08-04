@@ -9,7 +9,7 @@ add_library(MAORIS
 			)
 
 
-INSTALL(TARGETS MAORIS DESTINATION lib/RSI)
+INSTALL(TARGETS MAORIS DESTINATION lib/maoris)
 
 add_executable(segmentation_example segmentation_example.cpp)
 target_link_libraries(segmentation_example ${OpenCV_LIBS} ${vodigrex_LIBRARIES} MAORIS -lboost_unit_test_framework -lboost_filesystem -lboost_system)

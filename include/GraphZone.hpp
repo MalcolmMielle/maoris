@@ -17,16 +17,41 @@ namespace AASS{
 		
 		template<typename VertexType, typename EdgeType>
 		class GraphZoneInterface : public bettergraph::SimpleGraph<VertexType, EdgeType>{
+			
 			static_assert(std::is_base_of<Zone, VertexType>::value, "VertexType must derive from Zone");
 			static_assert(std::is_base_of<EdgeElement, EdgeType>::value, "EdgeType must derive from EdgeElement");
+			
+		public:
+			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::GraphType GraphZoneType;
+			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::Vertex VertexZone;
+			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::Edge EdgeZone;
+			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::VertexIterator VertexIteratorZone;
+			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::EdgeIterator EdgeIteratorZone;
+			
+			GraphZoneInterface(){}
+			
+			///@brief draw a simple image with no annotations.
+			void drawSimple(cv::Mat& drawmat) const;
+			void drawSimple(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const;
+			///@brief draw map with all info on image
+			void draw(cv::Mat& drawmat) const;
+			void draw(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const;
+			///@brief draw the zone one by one.
+			void drawPartial(cv::Mat& drawmat) const;
+			///@brief drawing function to compare the maps to the dataset of Bromman.
+			void drawEvaluation(cv::Mat& drawmat) const;
+			void drawEvaluation(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const;
+			
+			void drawContours(cv::Mat& drawmat) const;
+			void drawContours(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const;	
+			
 		};
-		
-		
+
 
 		//TODO convert Mat to Eigen !
 		// ATTENTION: if uniqueness is calculated and then a node is added, then the flag to check if the uniqueness was updated is wrong... Need to do it either every time a node is added but it will need to move the addVertex function here.
 
-		class GraphZone : public bettergraph::SimpleGraph<Zone, EdgeElement>{
+		class GraphZone : public GraphZoneInterface<Zone, EdgeElement>{
 			
 		private:
 			//TEST
@@ -41,11 +66,7 @@ namespace AASS{
 			double _threshold;
 			
 		public:
-			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::GraphType GraphZoneType;
-			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::Vertex VertexZone;
-			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::Edge EdgeZone;
-			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::VertexIterator VertexIteratorZone;
-			typedef typename bettergraph::SimpleGraph<Zone, EdgeElement>::EdgeIterator EdgeIteratorZone;
+			
 
 			GraphZone(): _margin_factor(0.10), _threshold(0.25){};
 			
@@ -55,20 +76,7 @@ namespace AASS{
 			
 			double getT(){return _threshold;}
 			
-			///@brief draw a simple image with no annotations.
-			void drawSimple(cv::Mat& drawmat) const;
-			void drawSimple(cv::Mat& m, const bettergraph::SimpleGraph<Zone, int>::Vertex& v, const cv::Scalar& color) const;
-			///@brief draw map with all info on image
-			void draw(cv::Mat& drawmat) const;
-			void draw(cv::Mat& m, const bettergraph::SimpleGraph<Zone, int>::Vertex& v, const cv::Scalar& color) const;
-			///@brief draw the zone one by one.
-			void drawPartial(cv::Mat& drawmat) const;
-			///@brief drawing function to compare the maps to the dataset of Bromman.
-			void drawEvaluation(cv::Mat& drawmat) const;
-			void drawEvaluation(cv::Mat& m, const bettergraph::SimpleGraph<Zone, int>::Vertex& v, const cv::Scalar& color) const;
-			
-			void drawContours(cv::Mat& drawmat) const;
-			void drawContours(cv::Mat& m, const bettergraph::SimpleGraph<Zone, int>::Vertex& v, const cv::Scalar& color) const;
+
 			
 			///@brief Remove all vertex with Value value. Do not preserve edges or zones
 			void removeVertexValue(int value){
@@ -119,10 +127,10 @@ namespace AASS{
 			 */
 			void removeDoors();
 			
-			double contactPointWithWalls(AASS::maoris::GraphZone::VertexZone v);
+			double contactPointWithWalls(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone v);
 			
 			bool lonelyVertices(){
-				std::pair<AASS::maoris::GraphZone::VertexIteratorZone, AASS::maoris::GraphZone::VertexIteratorZone> vp;
+				std::pair<AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexIteratorZone, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexIteratorZone> vp;
 				//vertices access all the vertix
 				std::cout << "NEW start lonely" << std::endl;
 		// 		std::cout << "num of vertices " << getNumVertices() << std::endl; 
@@ -143,7 +151,7 @@ namespace AASS{
 			 * @brief Remove vertices with no edges
 			 */
 			void removeLonelyVertices(){
-				std::pair<AASS::maoris::GraphZone::VertexIteratorZone, AASS::maoris::GraphZone::VertexIteratorZone> vp;
+				std::pair<AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexIteratorZone, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexIteratorZone> vp;
 				//vertices access all the vertix
 				// std::cout << "NEW start remove lonely" << std::endl;
 				// std::cout << "num of vertices " << getNumVertices() << std::endl; 
@@ -255,7 +263,7 @@ namespace AASS{
 			 * @param top_vertex_visited_tmp : empty deque used by the algorithm to remember which node were visited in the recursion
 			 * @param threshold : Threshold at which the difference between the value of top_vertex and a neighborhood vertex is considered enough for the neighborhood vertex not to be fused and to be considered a new zone. Actually no : fraction the new node must be partt of to not be fyused
 			 */
-			void getAllNodeRemovedWatershed(AASS::maoris::GraphZone::VertexZone& top_vertex, AASS::maoris::GraphZone::VertexZone& first_vertex, const std::deque< AASS::maoris::GraphZone::VertexZone >& top_vertex_visited, std::deque< AASS::maoris::GraphZone::VertexZone >& top_vertex_visited_tmp, double threshold, std::deque< AASS::maoris::GraphZone::VertexZone >& to_be_removed);
+			void getAllNodeRemovedWatershed(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& top_vertex, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& first_vertex, const std::deque< AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone >& top_vertex_visited, std::deque< AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone >& top_vertex_visited_tmp, double threshold, std::deque< AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone >& to_be_removed);
 
 			/**
 			* @brief get all ripples
@@ -263,15 +271,15 @@ namespace AASS{
 			* top_vertex_visited is all the vertext visited since the beginning
 			* dist is the maximum distance between the base and a ripple to be fused
 			*/
-			void getAllNodeRemovedRipples(AASS::maoris::GraphZone::VertexZone& base_vertex, const std::deque< AASS::maoris::GraphZone::VertexZone >& top_vertex_visited, int dist = -1);
-			void removeVertexWhilePreservingEdges(AASS::maoris::GraphZone::VertexZone& v, bool createUnBreakableLinks);
-			void removeVertexWhilePreservingEdges(AASS::maoris::GraphZone::VertexZone& v, AASS::maoris::GraphZone::VertexZone& v_to_fuse_in, bool createUnBreakableLinks);
+			void getAllNodeRemovedRipples(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& base_vertex, const std::deque< AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone >& top_vertex_visited, int dist = -1);
+			void removeVertexWhilePreservingEdges(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v, bool createUnBreakableLinks);
+			void removeVertexWhilePreservingEdges(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v_to_fuse_in, bool createUnBreakableLinks);
 			
 			///@brief Return true of the zone is ripple
-			bool isRipple(const AASS::maoris::GraphZone::VertexZone& base_vertex, const AASS::maoris::GraphZone::VertexZone& might_be_ripple) const;
+			bool isRipple(const AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& base_vertex, const AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& might_be_ripple) const;
 			
 			///@brief Check if the zone is a ripple of a neighborhood and removes it
-			bool checkAndReplaceRipple(AASS::maoris::GraphZone::VertexZone& might_be_ripple, AASS::maoris::GraphZone::VertexZone& to_fuse_in);
+			bool checkAndReplaceRipple(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& might_be_ripple, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& to_fuse_in);
 			
 			double variance (std::vector<double> input, double mean){
 				double variance = 0 ;
@@ -309,10 +317,275 @@ namespace AASS{
 			
 		};
 		
-		
-		
+
 
 	}
+}
+
+template<typename VertexType, typename EdgeType>		
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawPartial(cv::Mat& drawmat) const
+{
+	cv::Mat drawmat_old;
+	drawmat.copyTo(drawmat_old);
+	
+	cv::Scalar color;
+	cv::RNG rng(12345);
+	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
+	//vertices access all the vertix
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+		std::cout << "VERTEX" << std::endl;
+		if(drawmat.channels() == 1){
+			color = rng.uniform(50, 255);
+		}
+		else if(drawmat.channels() == 3){
+			color[0] = rng.uniform(50, 255);
+			color[1] = rng.uniform(50, 255);
+			color[2] = rng.uniform(50, 255);
+		}
+		
+		VertexZone v = *vp.first;
+		
+		if((*this)[v].getZone().size() > 0){
+// 				if(getNumEdges(v) > 1){
+			
+			cv::Mat copy = cv::Mat::zeros(drawmat_old.rows, drawmat_old.cols, CV_8U);
+			for(size_t j = 0 ; j < (*this)[v].getZone().size() ; ++j){
+				copy.at<uchar>((*this)[v].getZone()[j].x, (*this)[v].getZone()[j].y) = (*this)[v].getValue();
+			}
+			draw(drawmat, v, color);
+			draw(copy, v, color);
+			
+			EdgeIteratorZone out_i, out_end;
+			EdgeZone e;
+			
+			for (boost::tie(out_i, out_end) = boost::out_edges(v, (*this)); 
+				out_i != out_end; ++out_i) {
+				e = *out_i;
+				VertexZone src = boost::source(e, (*this)), targ = boost::target(e, (*this));
+				if( (*this)[targ].getZone().size() > 100 ){
+					cv::line(drawmat, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), color);
+					cv::line(copy, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), color);
+					for(size_t j = 0 ; j < (*this)[targ].getZone().size() ; ++j){
+						copy.at<uchar>((*this)[targ].getZone()[j].x, (*this)[targ].getZone()[j].y) = (*this)[targ].getValue();
+					}
+				}
+			}
+			
+			cv::imshow("Z", (*this)[v].getZoneMat());
+			cv::imshow("Partial" , copy);
+			cv::waitKey(0);
+		}
+		
+	}
+
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawEvaluation(cv::Mat& drawmat) const
+{
+	cv::Mat drawmat_old;
+	drawmat.convertTo(drawmat_old, CV_8U);
+	
+	cv::Scalar color;
+	int count = 1;
+	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
+	//vertices access all the vertix
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+		
+		if(drawmat.channels() == 1){
+			color = count;
+		}
+		else if(drawmat.channels() == 3){
+			color[0] = count;
+			color[1] = count;
+			color[2] = count;
+		}
+		count++;
+		
+		VertexZone v = *vp.first;
+		
+// 		if((*this)[v].getZone().size() > 100){
+// 				if(getNumEdges(v) > 1){
+			
+		drawEvaluation(drawmat, v, color);
+	}
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawSimple(cv::Mat& drawmat) const
+{
+	cv::Mat drawmat_old;
+	drawmat.convertTo(drawmat_old, CV_8U);
+	
+	cv::Scalar color;
+	cv::RNG rng(12345);
+	int nb_zones = this->getNumVertices();
+	int color_step = 249 / nb_zones;
+	int count = 1;
+	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
+	//vertices access all the vertix
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+		
+		if(drawmat.channels() == 1){
+			color = color_step * count;
+		}
+		else if(drawmat.channels() == 3){
+			color[0] = color_step * count;
+			color[1] = color_step * count;
+			color[2] = color_step * count;
+		}
+		count++;
+		
+		VertexZone v = *vp.first;
+		
+// 		if((*this)[v].getZone().size() > 100){
+// 				if(getNumEdges(v) > 1){
+			
+		drawSimple(drawmat, v, color);
+		
+	}
+		
+
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::draw(cv::Mat& drawmat) const
+{
+	
+	cv::Mat drawmat_old;
+	drawmat.convertTo(drawmat_old, CV_8U);
+	
+	cv::Scalar color;
+	cv::RNG rng(12345);
+	int nb_zones = this->getNumVertices();
+	int color_step = 249 / nb_zones;
+	int count = 1;
+	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
+	//vertices access all the vertix
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+		
+		if(drawmat.channels() == 1){
+			color = color_step * count;
+		}
+		else if(drawmat.channels() == 3){
+			color[0] = color_step * count;
+			color[1] = color_step * count;
+			color[2] = color_step * count;
+		}
+		count++;
+		
+		VertexZone v = *vp.first;
+		
+// 		if((*this)[v].getZone().size() > 100){
+// 				if(getNumEdges(v) > 1){
+			
+		draw(drawmat, v, color);
+		
+		EdgeIteratorZone out_i, out_end;
+		EdgeZone e;
+		
+		for (boost::tie(out_i, out_end) = boost::out_edges(v, (*this)); 
+			out_i != out_end; ++out_i) {
+			e = *out_i;
+			VertexZone src = boost::source(e, (*this)), targ = boost::target(e, (*this));
+			if( (*this)[targ].getZone().size() > 100 ){
+// 					cv::line(drawmat, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), cv::Scalar(255));
+			}
+			if( (*this)[e].canRemove() == false ){
+				cv::line(drawmat, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), cv::Scalar(255), 2);
+			}
+			else{
+				cv::line(drawmat, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), cv::Scalar(150));
+			}
+		}
+	}
+		
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+
+		VertexZone v = *vp.first;
+		EdgeIteratorZone out_i, out_end;
+		EdgeZone e;
+		(*this)[v].printLabel(drawmat);
+		
+	}
+
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawEvaluation(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const
+{
+// 		std::cout << std::endl;
+// 			for(size_t i = 0 ; i < (*this)[v].landmarks.size() ; i++){
+// 				cv::Point2i point;
+// 				point.x = (*this)[v].landmarks[i].first.getX();
+// 				point.y = (*this)[v].landmarks[i].first.getY();
+// 				cv::circle(m, point, 10, color, 3);
+// 			}
+// 			cv::drawContours( m, std::vector<std::vector<cv::Point> >(1,(*this)[v].contour), -1, color, 2, 8);
+	(*this)[v].drawZone(m, color);
+// 	std::cout << "VALUIE " << std::endl;
+// 	(*this)[v].printPCA();
+	
+// 	(*this)[v].printLabel(m);
+// 	cv::circle(m, (*this)[v].getCentroid(), 2, 255, -1);
+	
+// 			cv::Mat draw_tmp = cv::Mat::zeros(m.rows, m.cols, CV_8U);
+// 			for(size_t j = 0 ; j < (*this)[v].getZone().size() ; ++j){
+// 				draw_tmp.at<uchar>((*this)[v].getZone()[j].x, (*this)[v].getZone()[j].y) = 150;
+// 			}
+// 			
+// 			cv::circle(draw_tmp, (*this)[v].getCentroid(), 10, 255, -1);
+// 			
+// 			std::cout << "CENTROID " << (*this)[v].getCentroid() << "image size "<<  m.size() << std::endl;
+// 			
+// 			cv::imshow("Zones " , draw_tmp);
+// 			cv::waitKey(0);
+		
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawContours(cv::Mat& m,  const VertexZone& v, const cv::Scalar& color) const
+{
+	(*this)[v].drawContour(m, color);
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawContours(cv::Mat& drawmat) const
+{
+		cv::Mat drawmat_old;
+	drawmat.convertTo(drawmat_old, CV_8U);
+	
+	cv::Scalar color(255);
+	cv::RNG rng(12345);
+	int nb_zones = this->getNumVertices();
+	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
+	//vertices access all the vertix
+	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
+		
+		
+		
+		VertexZone v = *vp.first;
+		
+// 		if((*this)[v].getZone().size() > 100){
+// 				if(getNumEdges(v) > 1){
+			
+		drawContours(drawmat, v, color);
+	}
+
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawSimple(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const
+{
+	(*this)[v].drawZone(m, color);
+	(*this)[v].drawContour(m, color);
+}
+
+template<typename VertexType, typename EdgeType>
+inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::draw(cv::Mat& m, const VertexZone& v, const cv::Scalar& color) const
+{
+	(*this)[v].drawZone(m, color);
+	(*this)[v].drawContour(m, color);	
 }
 
 #endif

@@ -33,6 +33,32 @@ namespace AASS{
 		}
 		
 		
+		template<typename T>
+		inline T mean(std::vector<T>& in){
+			T sum = 0 ;
+			for(auto it = in.begin() ; it != in.end() ; ++it){
+				sum = sum + *it;
+			}
+			sum = sum / in.size();
+			return sum;
+		}
+			
+		template<typename T>
+		inline T variance(std::vector<T>& in, T mean){
+			T vari = 0 ;
+			for(auto it = in.begin() ; it != in.end() ; ++it){
+				T temp_el = *it - mean;
+				temp_el = temp_el * temp_el;
+				vari = vari + temp_el;
+			}
+			vari = vari / (in.size() - 1);
+			return vari;
+		}
+		
+		template<typename T>
+		inline T sd(T variance){
+			return std::sqrt(variance);
+		}
 		
 		
 		

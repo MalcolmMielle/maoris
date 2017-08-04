@@ -121,6 +121,9 @@ namespace AASS{
 		// 	std::deque <cv::Point2i >& getZone(){return _zone;}
 			const cv::Mat& getZoneMat() const {return _zone_mat;}
 			
+			cv::Point2i getSumXY() const { return _sum_of_x_and_y;}
+			cv::Size getSizeImg() const {return _img_size;}
+			
 			///@brief return the center of the zone by doing the mean of all the points
 			cv::Point2i getCentroid(){
 				if( _zone.size() == 0 ){
