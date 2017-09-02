@@ -1,6 +1,6 @@
 #include "Segmentor.hpp"
 
-double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src, double threshold, double margin)
+double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src)
 {
 					
 	std::cout << "T" << graph_src.getT() << std::endl;
@@ -68,9 +68,19 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	int size_to_remove2 = 10;
 	
 	begin_process = getTime();
+	
+	double thres = graph_src.getT();
+	double marg = graph_src.getMargin();
+	double t_ripples = graph_src.getThresholdFusionRipples();
+	double t_doors = graph_src.getThresholdFusionDoors();
+	
 	graph_src = zone_maker.getGraph();
-	graph_src.setThreshold(threshold);
-	graph_src.setMargin(margin);
+	
+	graph_src.setThreshold(thres);
+	graph_src.setMargin(marg);
+	graph_src.setThresholdFusionRipples(t_ripples);
+	graph_src.setThresholdFusionDoors(t_doors);
+	
 // 	graph_src.removeVertexValue(0);	
 	graph_src.removeVertexUnderSize(size_to_remove2, true);
 

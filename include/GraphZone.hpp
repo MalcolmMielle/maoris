@@ -65,18 +65,25 @@ namespace AASS{
 			 ///@param[in] threshold : fraction representing the fraction of the biggest value of cluster until a new cluster must created. If init node got value 100 and threshold = 1/10 then if the new node as 90 or less, it is not fused.
 			double _threshold;
 			
+			double _threshold_fusion_ripples;
+			double _threshold_fusion_doors;
+			
 		public:
 			
 
-			GraphZone(): _margin_factor(0.10), _threshold(0.25){};
+			GraphZone(): _margin_factor(0.10), _threshold(0.25), _threshold_fusion_ripples(40){};
 			
 			
 			void setThreshold(double t){if(t >= 0 && t<= 1){_threshold = t;}else{throw std::runtime_error("Threhsold needs to be between 0 and 1");}}
 			void setMargin(double m){if(m >= 0 && m<= 1){_margin_factor = m;}else{throw std::runtime_error("Margin needs to be between 0 and 1");}}
+			double setThresholdFusionRipples(double t){ _threshold_fusion_ripples = t;}
+			double setThresholdFusionDoors(double t){ _threshold_fusion_doors = t;}
 			
 			double getT(){return _threshold;}
+			double getMargin(){return _margin_factor;}
+			double getThresholdFusionRipples(){return _threshold_fusion_ripples;}
+			double getThresholdFusionDoors(){return _threshold_fusion_doors;}
 			
-
 			
 			///@brief Remove all vertex with Value value. Do not preserve edges or zones
 			void removeVertexValue(int value){

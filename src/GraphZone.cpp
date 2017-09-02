@@ -1076,7 +1076,7 @@ bool AASS::maoris::GraphZone::isRipple(const VertexZone& base_vertex, const Vert
 // 	std::cout << "Contact percent " << nb_contact << std::endl;
 	//BEST FOR SKETCHMAPS
 	//Check that the object is not enterely circled by the zone. i.e a windows or a object in the room
-	if(nb_contact >= 40){
+	if(nb_contact >= _threshold_fusion_ripples){
 // 		std::cout << "it is a ripple: PERCENT " << z_ripple.contactPoint(z_base) << std::endl;
 		return true;
 	}

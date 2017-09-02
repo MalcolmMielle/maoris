@@ -22,7 +22,7 @@ namespace AASS{
 		public:
 			Segmentor(){}
 			
-			double segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src, double threshold = 0.25, double margin = 0.10);			
+			double segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src);			
 			
 			cv::Mat& getSegmentedMap(){return _segmented;}
 			const cv::Mat& getSegmentedMap() const {return _segmented;}

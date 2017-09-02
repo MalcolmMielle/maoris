@@ -173,7 +173,9 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 	AASS::maoris::GraphZone graph_slam;
 	graph_slam.setThreshold(t);
-	graph_slam.setMargin(m);
+// 	graph_slam.setMargin(m);
+// 	graph_slam.setThresholdFusionRipples(t);
+// 	graph_slam.setThresholdFusionDoors(t);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
@@ -183,12 +185,12 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY_INV);
 // 	cv::imshow("map in", slam);
 // 	cv::waitKey(0);
-	
+	std::cout << "Input parameters " << t << " " << m << std::endl;
 	std::cout << "T" << graph_slam.getT() << std::endl;
 	double time = 0;
 // 	makeGraph(slam, graph_slam, time);
 	AASS::maoris::Segmentor segmenteur;
-	time = segmenteur.segmentImage(slam, graph_slam, t, m);
+	time = segmenteur.segmentImage(slam, graph_slam);
 	cv::Mat segmented_map = segmenteur.getSegmentedMap();
 	
 	std::cout << "Total time: " << time << std::endl;
@@ -267,7 +269,7 @@ int main(int argc, char** argv){
 			double t = 0;
 			double m = 0.1;
 			
-			for(t = 0; t < 0.85 ; t = t + 0.05){
+			for(t = 0; t < 0.8 ; t = t + 0.05){
 // 				for(m = 0; m <= 1 ; m = m + 0.05){
 			
 			
@@ -312,7 +314,7 @@ int main(int argc, char** argv){
 	}
 	
 	//add precision mean and recal + nb of file
-	std::string result_file = "maoris_param_test.dat";
+	std::string result_file = "maoris_param_doors.dat";
 	std::cout << "SIZE " << evalparam.size() << std::endl;
 	evalparam.exportAll(result_file);
 

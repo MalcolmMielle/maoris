@@ -186,7 +186,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	double time = 0;
 // 	makeGraph(slam, graph_slam, time);
 	AASS::maoris::Segmentor segmenteur;
-	time = segmenteur.segmentImage(slam, graph_slam, 0.35, 0.10);
+	time = segmenteur.segmentImage(slam, graph_slam);
 	cv::Mat segmented_map = segmenteur.getSegmentedMap();
 	
 	std::cout << "Total time: " << time << std::endl;
