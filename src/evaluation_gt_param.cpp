@@ -169,13 +169,21 @@ void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, c
 
 
 
-void process(const std::string& file, const std::string& full_path_GT, AASS::maoris::Evaluation& eval, double t, double m){
+void process(const std::string& file, const std::string& full_path_GT, AASS::maoris::Evaluation& eval, double t, int test_what){
 
 	AASS::maoris::GraphZone graph_slam;
-	graph_slam.setThreshold(t);
-// 	graph_slam.setMargin(m);
-// 	graph_slam.setThresholdFusionRipples(t);
-// 	graph_slam.setThresholdFusionDoors(t);
+	if(test_what == 1){
+		graph_slam.setThreshold(t);
+	}
+	if(test_what == 2){
+		graph_slam.setMargin(t);
+	}
+	if(test_what == 3){
+		graph_slam.setThresholdFusionRipples(t);
+	}
+	if(test_what == 4){
+		graph_slam.setThresholdFusionDoors(t);
+	}
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
@@ -185,7 +193,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY_INV);
 // 	cv::imshow("map in", slam);
 // 	cv::waitKey(0);
-	std::cout << "Input parameters " << t << " " << m << std::endl;
+	std::cout << "Input parameters " << t << std::endl;
 	std::cout << "T" << graph_slam.getT() << std::endl;
 	double time = 0;
 // 	makeGraph(slam, graph_slam, time);
@@ -246,7 +254,7 @@ int main(int argc, char** argv){
 // 	char** argv = boost::unit_test::framework::master_test_suite().argv;
 		
 	
-	AASS::maoris::EvaluationParam evalparam;
+	
 	
 	std::string path_file = argv[1];
 	std::string path_gt = argv[2];
@@ -266,46 +274,100 @@ int main(int argc, char** argv){
 		
 		if(boost::filesystem::is_directory(p)){
 			
-			double t = 0;
-			double m = 0.1;
+			int test_what = 1;
 			
-			for(t = 0; t < 0.8 ; t = t + 0.05){
-// 				for(m = 0; m <= 1 ; m = m + 0.05){
-			
-			
-					AASS::maoris::Evaluation eval;
-					
-					std::vector<boost::filesystem::path> v;
-					//Get all files and sort them
-					std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
-					std::sort(v.begin(), v.end());
-					
-					
-					
-		// 			int i = 0;
-					for (std::vector<boost::filesystem::path>::const_iterator it (v.begin()); it != v.end(); it = ++it)
-					{
-						boost::filesystem::path fn = *it;
+			for(test_what = 1 ; test_what < 5 ; ++test_what){
+				
+				AASS::maoris::EvaluationParam evalparam;
+				
+				double t = 0;
+				double step = 0;
+				double end = 0;
+				
+				if(test_what == 1){
+					t = 0;
+					step = 0.05;
+					end = 0.8;
+				}
+				if(test_what == 2){
+					t = 0;
+					step = 0.05;
+					end = 0.8;
+				}
+				if(test_what == 3){
+					t = 30;
+					step = 5;
+					end = 60;
+				}
+				if(test_what == 4){
+					t = 30;
+					step = 5;
+					end = 60;
+				}
+				else{
+					throw std::runtime_error("TOO FAR");
+				}
+				
+				
+				
+				
+				for(t; t < end ; t = t + step){
+	// 				for(m = 0; m <= 1 ; m = m + 0.05){
+				
+				
+						AASS::maoris::Evaluation eval;
 						
-						std::string name = fn.filename().string();
-						std::string model = path_gt + name;
+						std::vector<boost::filesystem::path> v;
+						//Get all files and sort them
+						std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
+						std::sort(v.begin(), v.end());
 						
-						std::cout << "Process " << fn.string() << " with model " << model << std::endl;
 						
-						process(fn.string(), model, eval, t, m);
 						
-						std::cout << "SIZE " << eval.size() << std::endl;
-		// 				if(i == 3){
-		// 					return 0;
-		// 				}
-		// 				++i;
+			// 			int i = 0;
+						for (std::vector<boost::filesystem::path>::const_iterator it (v.begin()); it != v.end(); it = ++it)
+						{
+							boost::filesystem::path fn = *it;
+							
+							std::string name = fn.filename().string();
+							std::string model = path_gt + name;
+							
+							std::cout << "Process " << fn.string() << " with model " << model << std::endl;
+							
+							process(fn.string(), model, eval, t, test_what);
+							
+							std::cout << "SIZE " << eval.size() << std::endl;
+			// 				if(i == 3){
+			// 					return 0;
+			// 				}
+			// 				++i;
+						}
+						
+						eval.calculate();
+						evalparam.add(eval, t, -1);
+						
 					}
 					
-					eval.calculate();
-					evalparam.add(eval, t, m);
+					//add precision mean and recal + nb of file
+					std::string result_file;
 					
-				}
-// 			}
+					if(test_what == 1){
+						result_file = "maoris_param_threshold.dat";
+					}
+					if(test_what == 2){
+						result_file = "maoris_param_margin.dat";
+					}
+					if(test_what == 3){
+						result_file = "maoris_param_ripples.dat";
+					}
+					if(test_what == 4){
+						result_file = "maoris_param_doors.dat";
+					}
+					
+					std::cout << "SIZE " << evalparam.size() << std::endl;
+					evalparam.exportAll(result_file);
+	// 			}
+			}
 		}
 	}
 	catch (const boost::filesystem::filesystem_error& ex)
@@ -314,8 +376,8 @@ int main(int argc, char** argv){
 	}
 	
 	//add precision mean and recal + nb of file
-	std::string result_file = "maoris_param_doors.dat";
-	std::cout << "SIZE " << evalparam.size() << std::endl;
-	evalparam.exportAll(result_file);
+// 	std::string result_file = "maoris_param_doors.dat";
+// 	std::cout << "SIZE " << evalparam.size() << std::endl;
+// 	evalparam.exportAll(result_file);
 
 }
