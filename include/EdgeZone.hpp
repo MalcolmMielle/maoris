@@ -45,6 +45,7 @@ namespace AASS{
 			
 			void setMinimum(double in){_fromFuse = true; min_toward = in;}
 			double getMinimum(){return min_toward;}
+			double getMinimum() const {return min_toward;}
 			
 			bool wasRipple(){return _fromFuse;}
 // 			size_t size(){return _score_old.size();}

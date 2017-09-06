@@ -76,7 +76,7 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	std::ofstream myfile;
 	if(!exists_test3(result_file)){
 		myfile.open (result_file);
-		myfile << "# precision recall inverse_recall time labels size fscore gscore dorscore matthewsCC accuracy\n";
+		myfile << "# precision recall inverse_recall time labels size fscore gscore dorscore matthewsCC accuracy tp tn fp fn\n";
 	}
 	else{
 		myfile.open (result_file, std::ios::out | std::ios::app);
@@ -86,12 +86,12 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	{
 		for(int i = 0 ; i < _precision.size() ; ++i){
 			
-			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _matthewCC_individual[i] << " " << _accuracy_individual[i] <<  " " << "\n";
+			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _matthewCC_individual[i] << " " << _accuracy_individual[i] <<  " " << _tp[i] << " " << _tn[i] << " " << _fp[i] << " " << _fn[i] << "\n";
 			
 		}
 		
-		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC accuracy\n";
-		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _accuracy << "\n";
+		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC accuracy\n";
+		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _accuracy << "\n";
 		myfile.close();
 		
 		
@@ -104,7 +104,7 @@ void AASS::maoris::Evaluation::computeMeasures()
 {
 	int i;
 	if(_matthewCC_individual.size() > 0){
-		i = _matthewCC_individual.size() - 1;
+		i = _matthewCC_individual.size();
 	}
 	else{
 		i = 0;
@@ -143,6 +143,7 @@ void AASS::maoris::Evaluation::calculate()
 	_f1score = fscore<double>(_mean_p, _mean_r);
 	_gscore = gscore<double>(_mean_p, _mean_r);
 	_matthewCC = mean<double>(_matthewCC_individual);
+	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
 	_dor = mean<double>(_dor_individual);
 	_accuracy = mean<double>(_accuracy_individual);
 	

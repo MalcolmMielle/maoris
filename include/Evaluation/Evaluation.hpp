@@ -106,6 +106,7 @@ namespace AASS{
 			double _gscore;
 			double _accuracy;
 			double _matthewCC;
+			double _sd_mCC;
 			double _dor;
 			
 			
@@ -126,6 +127,7 @@ namespace AASS{
 			double getSDPrecision(){return _sd_p;}
 			double getSDRecall(){return _sd_r;}
 			double getSDInverseRecall(){return _sd_ir;}
+			double getSDMatthewCC(){return _sd_mCC;}
 			
 			void calculate();
 			

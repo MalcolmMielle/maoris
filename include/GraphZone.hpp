@@ -71,7 +71,7 @@ namespace AASS{
 		public:
 			
 
-			GraphZone(): _margin_factor(0.10), _threshold(0.25), _threshold_fusion_ripples(40){};
+			GraphZone(): _margin_factor(0.10), _threshold(0.25), _threshold_fusion_ripples(40), _threshold_fusion_doors(40){};
 			
 			
 			void setThreshold(double t){if(t >= 0 && t<= 1){_threshold = t;}else{throw std::runtime_error("Threhsold needs to be between 0 and 1");}}
@@ -122,7 +122,8 @@ namespace AASS{
 			/**
 			 * @brief watershed.
 			 */
-			void watershed(){watershed(_threshold);}
+			void watershed(){std::cout << "WATERSHED THRESH " << _threshold << std::endl;
+				watershed(_threshold);}
 			
 			/**
 			 * @brief watershed. DO NOT USE DIRECTLY. Indeed, the parameter thrshold is also used by the ripple removal so it should be the same. One should use watershed()
@@ -504,6 +505,23 @@ inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::draw(cv::Mat
 			else{
 				cv::line(drawmat, (*this)[src].getCentroid(), (*this)[targ].getCentroid(), cv::Scalar(150));
 			}
+			
+			std::string text;
+			text = std::to_string((*this)[e].getMinimum());
+			std::stringstream precisionValue;
+			precisionValue.precision(2);
+			
+			cv::Point center;
+			VertexZone srccc = boost::source(e, (*this)), targcc = boost::target(e, (*this));
+			center.x = ( (*this)[srccc].getCentroid().x + (*this)[targcc].getCentroid().x)/ 2;
+			center.y = ( (*this)[srccc].getCentroid().y + (*this)[targcc].getCentroid().y)/ 2;
+			
+// 				text = text + " sd " + precisionValue.str() ;
+// 				text = text + ":s:" + textsi;
+			cv::putText(drawmat, text, center, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255));
+			
+			
+			
 		}
 	}
 		

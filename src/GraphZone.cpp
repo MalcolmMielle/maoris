@@ -133,7 +133,7 @@ void AASS::maoris::GraphZone::removeDoors()
 		++i;
 // 		auto it_copy = it;
 // 		++it;
-		if(it->second > 40){
+		if(it->second > _threshold_fusion_doors){
 			EdgeIteratorZone out_i, out_end;
 			boost::tie(out_i, out_end) = boost::out_edges(it->first, (*this));
 			EdgeZone e_second = *out_i;
@@ -144,7 +144,7 @@ void AASS::maoris::GraphZone::removeDoors()
 				out_i != out_end;) {
 				EdgeZone e_second = *out_i;
 				VertexZone targ = boost::target(e_second, (*this));
-				if(contact_point[targ] < 40){
+				if(contact_point[targ] < _threshold_fusion_doors){
 					v_to_fuse_in = targ;
 				}
 				out_i++;

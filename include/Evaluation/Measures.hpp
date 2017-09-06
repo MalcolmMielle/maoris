@@ -2,6 +2,7 @@
 #define MAORIS_MEASURES_01082017
 
 #include <cmath>
+#include <stdio.h>
 
 namespace AASS{
 	namespace maoris{
@@ -28,6 +29,7 @@ namespace AASS{
 		
 		template<typename T>
 		inline T matthewCC(T tp, T fp, T tn, T fn){
+			std::cout << "( (" << tp<< " * "<< tn<< ") - (" << fp << " * " << fn << ") ) / ( std::sqrt( (" << tp << " + " << fp << ") * (" << tp << " + " << fn << ") * (" << tn << " + " << fp << ") * (" << tn << " + " << fn << ") ) ) " << std::endl;
 			return ( (tp * tn) - (fp * fn) ) / ( std::sqrt( (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) ) );
 		}
 		
