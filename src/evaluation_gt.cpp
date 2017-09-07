@@ -143,7 +143,18 @@ void makeGraph(cv::Mat& slam, AASS::maoris::GraphZone& graph_slam, double& time)
 	
 	begin_process = getTime();
 	graph_slam = zone_maker.getGraph();
-	graph_slam.setThreshold(0.25);
+// 	graph_slam.setThreshold(0.25);
+	
+	graph_slam.setThreshold(0.45);
+	graph_slam.setMargin(0.1);
+	graph_slam.setThresholdFusionRipples(40);
+	graph_slam.setThresholdFusionDoors(15);
+	
+	std::cout << " graph_src.getThresholdFusionDoors(); " << graph_slam.getThresholdFusionDoors() << std::endl;
+	std::cout << " graph_src.getThreshold(); " << graph_slam.getT() << std::endl;
+	std::cout << " graph_src.getThresholdmargin(); " << graph_slam.getMargin() << std::endl;
+	std::cout << " graph_src.getThresholdFusionRipples(); " << graph_slam.getThresholdFusionRipples() << std::endl;
+	
 // 	graph_slam.removeVertexValue(0);	
 	graph_slam.removeVertexUnderSize(size_to_remove2, true);
 
@@ -162,6 +173,8 @@ void makeGraph(cv::Mat& slam, AASS::maoris::GraphZone& graph_slam, double& time)
 	
 	//Watershed Algorithm
 	graph_slam.watershed();
+	
+	graph_slam.removeDoors();
 	
 	int size_to_remove = 100;
 	graph_slam.removeVertexUnderSize(size_to_remove, true);
@@ -187,6 +200,10 @@ BOOST_AUTO_TEST_CASE(trying)
 	std::string full_path_GT = argv[2];
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 	AASS::maoris::GraphZone graph_slam;
+	graph_slam.setThreshold(0.25);
+	graph_slam.setMargin(0.1);
+	graph_slam.setThresholdFusionRipples(40);
+	graph_slam.setThresholdFusionDoors(40);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);

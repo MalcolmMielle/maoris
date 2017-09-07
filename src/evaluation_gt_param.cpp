@@ -174,14 +174,26 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	AASS::maoris::GraphZone graph_slam;
 	if(test_what == 1){
 		graph_slam.setThreshold(t);
+		graph_slam.setMargin(0.1);
+		graph_slam.setThresholdFusionRipples(40);
+		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 2){
+		graph_slam.setThreshold(0.3);
 		graph_slam.setMargin(t);
+		graph_slam.setThresholdFusionRipples(40);
+		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 3){
+		graph_slam.setThreshold(0.3);
+		graph_slam.setMargin(0.1);
 		graph_slam.setThresholdFusionRipples(t);
+		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 4){
+		graph_slam.setThreshold(0.3);
+		graph_slam.setMargin(0.1);
+		graph_slam.setThresholdFusionRipples(40);
 		graph_slam.setThresholdFusionDoors(t);
 	}
 	
@@ -273,10 +285,8 @@ int main(int argc, char** argv){
 		}
 		
 		if(boost::filesystem::is_directory(p)){
-			
-			int test_what = 1;
-			
-			for(test_what = 1 ; test_what < 5 ; ++test_what){
+						
+			for(int test_what = 1 ; test_what < 2 ; ++test_what){
 				
 				AASS::maoris::EvaluationParam evalparam;
 				
@@ -287,22 +297,22 @@ int main(int argc, char** argv){
 				if(test_what == 1){
 					t = 0;
 					step = 0.05;
-					end = 0.8;
+					end = 0.85;
 				}
-				if(test_what == 2){
+				else if(test_what == 2){
 					t = 0;
 					step = 0.05;
-					end = 0.8;
+					end = 0.85;
 				}
-				if(test_what == 3){
+				else if(test_what == 3){
 					t = 30;
 					step = 5;
-					end = 60;
+					end = 65;
 				}
-				if(test_what == 4){
-					t = 30;
+				else if(test_what == 4){
+					t = 0;
 					step = 5;
-					end = 60;
+					end = 105;
 				}
 				else{
 					throw std::runtime_error("TOO FAR");

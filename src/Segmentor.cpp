@@ -97,10 +97,11 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	graph_src.updateContours();
 	graph_src.removeRiplesv3();
 	
+	
 // 	cv::Mat copyt;
 // 	outer.copyTo(copyt);
-// 	graph_src.drawSimple(copyt);
-// 	cv::imshow("s", copyt);
+// 	graph_src.draw(copyt);
+// 	cv::imshow("ripples", copyt);
 // 	cv::waitKey(0);
 // 	
 	end_process = getTime();	decompose_time = end_process - begin_process;
@@ -114,8 +115,24 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	//Watershed Algorithm
 	graph_src.watershed();
 	
+// 	cv::Mat copytsss;
+// 	outer.copyTo(copytsss);
+// 	graph_src.draw(copytsss);
+// 	cv::imshow("watershed", copytsss);
+// 	cv::waitKey(0);
+// 	
 	
 	graph_src.removeDoors();
+	
+	std::cout << " graph_src.getThresholdFusionDoors(); " << graph_src.getThresholdFusionDoors() << std::endl;
+	std::cout << " graph_src.getThreshold(); " << graph_src.getT() << std::endl;
+	std::cout << " graph_src.getThresholdmargin(); " << graph_src.getMargin() << std::endl;
+	std::cout << " graph_src.getThresholdFusionRipples(); " << graph_src.getThresholdFusionRipples() << std::endl;
+// 		cv::Mat copytt;
+// 	outer.copyTo(copytt);
+// 	graph_src.drawSimple(copytt);
+// 	cv::imshow("s_after doors", copytt);
+// 	cv::waitKey(0);
 
 	
 	

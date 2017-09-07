@@ -173,6 +173,11 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 	AASS::maoris::GraphZone graph_slam;
 	
+	graph_slam.setThreshold(0.55);
+	graph_slam.setMargin(0.1);
+	graph_slam.setThresholdFusionRipples(40);
+	graph_slam.setThresholdFusionDoors(17);
+	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
 	cv::Mat slam = slam_in > 250;
@@ -203,13 +208,13 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 //     graph_slam.draw(graphmat_vis);
 // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
 // 	cv::imshow("GRAPH Visible", graphmat_vis);
+// // 	
+// // 	std::cout << "Zones " << graph_slam.getNumVertices() << std::endl;
 // 	
-// 	std::cout << "Zones " << graph_slam.getNumVertices() << std::endl;
-	
-	
-// 	cv::Mat partial = cv::Mat::zeros(slam1.size(), CV_8U);
-//     graph_slam.drawPartial(partial);
-	
+// 	
+// // 	cv::Mat partial = cv::Mat::zeros(slam1.size(), CV_8U);
+// //     graph_slam.drawPartial(partial);
+// 	
 // 	cv::Mat img_hist_equalized;
 // 	cv::equalizeHist(graphmat, img_hist_equalized);
 // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));

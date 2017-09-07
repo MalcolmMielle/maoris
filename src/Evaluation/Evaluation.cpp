@@ -90,8 +90,8 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 			
 		}
 		
-		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC accuracy\n";
-		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _accuracy << "\n";
+		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC matthiew_median accuracy\n";
+		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _matthewCC_median << " " << _accuracy << "\n";
 		myfile.close();
 		
 		
@@ -143,6 +143,7 @@ void AASS::maoris::Evaluation::calculate()
 	_f1score = fscore<double>(_mean_p, _mean_r);
 	_gscore = gscore<double>(_mean_p, _mean_r);
 	_matthewCC = mean<double>(_matthewCC_individual);
+	_matthewCC_median = median<double>(_matthewCC_individual);
 	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
 	_dor = mean<double>(_dor_individual);
 	_accuracy = mean<double>(_accuracy_individual);

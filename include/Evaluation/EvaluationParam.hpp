@@ -20,6 +20,7 @@ namespace AASS{
 			std::vector<double> _t_value;
 			std::vector<double> _m_value;
 			std::vector<double> _matthewCC;
+			std::vector<double> _matthewCC_median;
 			std::vector<double> _sd_matthewCC;
 			std::vector<double> _gscore;
 			std::vector<double> _dor;
@@ -61,6 +62,7 @@ namespace AASS{
 				
 				_matthewCC.push_back(eval.getMatthewsCC());
 				_sd_matthewCC.push_back(eval.getSDMatthewCC());
+				_matthewCC_median.push_back(eval.getMatthewsCCMedian());
 				_gscore.push_back(eval.getGscore());
 				_f1_score.push_back(eval.getFscore());
 				_dor.push_back(eval.getDOR());
@@ -75,7 +77,7 @@ namespace AASS{
 				std::ofstream myfile;
 				if(!exists_test3(result_file)){
 					myfile.open (result_file);
-					myfile << "# mean_p mean_r mean_ir sd_p sd_r sd_ir f1_score g_score dor matthewsCC sd_mCC accuracy t m\n";
+					myfile << "# mean_p mean_r mean_ir sd_p sd_r sd_ir f1_score g_score dor matthewsCC sd_mCC matthewsCCmedian accuracy t m\n";
 				}
 				else{
 					myfile.open (result_file, std::ios::out | std::ios::app);
@@ -85,7 +87,7 @@ namespace AASS{
 				{
 					for(int i = 0 ; i < _mean_p.size() ; ++i){
 						
-						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _m_value[i] <<"\n";
+						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _matthewCC_median[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _m_value[i] <<"\n";
 						
 					}
 					
