@@ -156,7 +156,7 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	std::vector<double> precisions;
 	std::vector<double> recalls;
 	std::vector<double> inverse_recalls;
-	
+	                  
 	std::map<int,int> segmented2GT_tags;
 			
 	cv::Mat GT_segmentation   = cv::Mat::zeros(GT_segmentation_in.size(),CV_8UC1);
@@ -169,7 +169,7 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	
 	std::map<int, std::vector<cv::Point> > dude_points;
 	std::map<int, std::vector<cv::Point> > gt_points;
-	
+		
 	int nb_of_pixels = 0;
 	
 	for(int x=0; x < GT_segmentation.size().width; x++){
@@ -195,32 +195,30 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		}
 	}
 	
+	
+	AllZoneAsso allAsso;
+	allAsso.FromTag(DuDe_tag2mapper);
+
+	allAsso.sort();
+	allAsso.calculateAsso();
+	
 	std::vector<double> tp;
 	std::vector<double> tn;
 	std::vector<double> fp;
 	std::vector<double> fn;
-	
-	//calculate true positive and all only for the segmentation given by the user
-	for( tag2tagMapper::iterator it = DuDe_tag2mapper.begin(); it!= DuDe_tag2mapper.end(); it++ ){
-		
-		
-//				std::cout << "   " << it->first << " connected to "<< std::endl;
-		
-		tag2points inside = it->second;
-		auto gt_equivalent_seg = it->second.begin();
-		int max_intersection=0; 
-		for( tag2points::iterator it2 = inside.begin(); it2!= inside.end(); it2++ ){
-			if (it2->second.size() > max_intersection){
-				max_intersection = it2->second.size();
-				gt_equivalent_seg = it2;
-			}	
-		}
-		
-		
 
+// 	double tp = 0 ;
+// 	double tn = 0 ;
+// 	double fp = 0 ;
+// 	double fn = 0 ;
+	
+	for (auto it = allAsso.associations.begin() ; it != allAsso.associations.end() ; ++it){
+		int seg = it->first;
+		int gt = it->second;
 		
-		int total_points = dude_points[it->first].size();
-		int total_gt_point = gt_points[gt_equivalent_seg->first].size();
+		int max_intersection = DuDe_tag2mapper[seg][gt].size();
+		int total_points = dude_points[seg].size();
+		int total_gt_point = gt_points[gt].size();
 		double tp_t = max_intersection;
 		double fp_t = total_points - max_intersection;
 		double tn_t = nb_of_pixels - (fp_t - total_gt_point);
@@ -235,27 +233,98 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		recalls.push_back(tp_t / (tp_t + fn_t));
 		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
 		
-		std::cout << "p : " << tp_t / (tp_t + fp_t) << " r : " << tp_t / (tp_t + fn_t) << " ir : " << fp_t / (fp_t + tn_t) << std::endl;
 		
 // 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
-// 		for(auto it3 = dude_points[it->first].begin() ;  it3 != dude_points[it->first].end() ; ++it3){
+// 		for(auto it3 = dude_points[seg].begin() ;  it3 != dude_points[seg].end() ; ++it3){
 // 			DuDe_segmentation_draw.at<uchar>(*it3) = 255;
 // 		}
 // 		cv::imshow("dude", DuDe_segmentation_draw);
 // 		
 // 		cv::Mat GT_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
-// 		for(auto it3 = gt_points[gt_equivalent_seg->first].begin() ;  it3 != gt_points[gt_equivalent_seg->first].end() ; ++it3){
+// 		for(auto it3 = gt_points[gt].begin() ;  it3 != gt_points[gt].end() ; ++it3){
 // 			GT_segmentation_draw.at<uchar>(*it3) = 255;
 // 		}
 // 		cv::imshow("GT temp", GT_segmentation_draw);
 // 		cv::waitKey(0);
 		
+		
+		
+		
 	}
+	
+	
+	
+	
+	
+	
+// 	//calculate true positive and all only for the segmentation given by the user
+// 	for( tag2tagMapper::iterator it = DuDe_tag2mapper.begin(); it!= DuDe_tag2mapper.end(); it++ ){
+// 		
+// 		
+// //				std::cout << "   " << it->first << " connected to "<< std::endl;
+// 		
+// 		tag2points inside = it->second;
+// 		auto gt_equivalent_seg = it->second.begin();
+// 		int max_intersection=0; 
+// 		for( tag2points::iterator it2 = inside.begin(); it2!= inside.end(); it2++ ){
+// 			if (it2->second.size() > max_intersection){
+// 				max_intersection = it2->second.size();
+// 				gt_equivalent_seg = it2;
+// 			}	
+// 		}
+// 		
+// 		
+// 
+// 		
+// 		int total_points = dude_points[it->first].size();
+// 		int total_gt_point = gt_points[gt_equivalent_seg->first].size();
+// 		double tp_t = max_intersection;
+// 		double fp_t = total_points - max_intersection;
+// // 		double tn_t = nb_of_pixels - (fp_t - total_gt_point);
+// // 		double fn_t = total_gt_point - tp_t;
+// 		
+// 		tp =  tp + tp_t;
+// 		fp = fp + fp_t;
+// 		
+// // 		precisions.push_back(tp_t / (tp_t + fp_t));
+// // 		recalls.push_back(tp_t / (tp_t + fn_t));
+// // 		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
+// 		
+// // 		std::cout << "p : " << tp_t / (tp_t + fp_t) << " r : " << tp_t / (tp_t + fn_t) << " ir : " << fp_t / (fp_t + tn_t) << std::endl;
+// 		
+// // 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
+// // 		for(auto it3 = dude_points[it->first].begin() ;  it3 != dude_points[it->first].end() ; ++it3){
+// // 			DuDe_segmentation_draw.at<uchar>(*it3) = 255;
+// // 		}
+// // 		cv::imshow("dude", DuDe_segmentation_draw);
+// // 		
+// // 		cv::Mat GT_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
+// // 		for(auto it3 = gt_points[gt_equivalent_seg->first].begin() ;  it3 != gt_points[gt_equivalent_seg->first].end() ; ++it3){
+// // 			GT_segmentation_draw.at<uchar>(*it3) = 255;
+// // 		}
+// // 		cv::imshow("GT temp", GT_segmentation_draw);
+// // 		cv::waitKey(0);
+// 		
+// 	}
 	
 // 	for(auto it = precisions.begin() ; it != precisions.end() ; ++it){
 // 		std::cout << "p : " << *it << std::endl;
 // 	}
 // 	exit(0);
+
+	//All point should be segmented thus no tn;
+// 	tn = 0;
+	
+// 	assert(nb_of_pixels >= tp);
+// 	assert(nb_of_pixels >= fp);
+	
+// 	fn = nb_of_pixels - tp - fp;
+	
+// 	assert(fn == 0);
+	
+// 	assert(nb_of_pixels >= fn);
+	
+	
 	
 	_precision.push_back(mean<double>(precisions));
 	_recall.push_back(mean<double>(recalls));

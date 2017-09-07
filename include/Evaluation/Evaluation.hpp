@@ -20,9 +20,153 @@ namespace AASS{
 	
 	namespace maoris{
 		
+				
 		typedef std::map <std::vector<int>, std::vector <cv::Point> > match2points;
 		typedef std::map <int, std::vector <cv::Point> > tag2points;
 		typedef std::map <int, tag2points> tag2tagMapper;
+		
+		///Represent all point in a GT in contact with a segmented zone
+		class ZoneTest{
+		public:
+			std::vector<cv::Point> all_point;
+			int pixel_value;
+		public:
+			ZoneTest(int pix) : pixel_value(pix){}
+			void addPoint(const cv::Point & p){all_point.push_back(p);}
+			size_t size() const {return all_point.size();}
+			void push_back(const cv::Point& p){all_point.push_back(p);}
+			void push_back(const std::vector<cv::Point>& p){
+				for(auto it = p.begin() ; it < p.end(); ++it){
+					all_point.push_back(*it);
+				}
+			}
+			void print(){
+				for( auto it = all_point.begin() ; it != all_point.end() ; ++it ){	
+					std::cout << " " << pixel_value<< ":" << all_point.size() << " - ";
+				}
+			}
+			
+		};
+		
+		///Store all GT zone in contact with a given Segmented Zone
+		class ZoneAsso{
+		public:
+			std::vector<ZoneTest> other_zones;
+			int pixel_value;
+		public:
+			ZoneAsso(int pixe) : pixel_value(pixe){}
+			bool addPoint(int pix, cv::Point p){
+				for(auto it = other_zones.begin() ; it != other_zones.end() ; ++it){
+					if(it->pixel_value == pix){
+						it->push_back(p);
+						return 0;
+					}
+				}
+				ZoneTest z(pix);
+				z.push_back(p);
+				other_zones.push_back(z);
+			}
+			void addTag(const tag2points& tag){
+				for( auto it2 = tag.begin(); it2!= tag.end(); it2++ ){
+					ZoneTest z(it2->first);
+					z.push_back(it2->second);
+					other_zones.push_back(z);
+				}
+			}
+			
+			
+			void sort(){
+				std::sort(other_zones.begin(), other_zones.end(), []( const ZoneTest& a, const ZoneTest& b)
+				{						
+					return a.size() > b.size();
+				});
+				
+		
+			}
+			
+			void print(){
+				std::cout << "Zone " << pixel_value << " ";
+				for( auto it = other_zones.begin() ; it != other_zones.end() ; ++it ){	
+					it->print();
+				}
+				std::cout << std::endl;
+			}
+			
+			
+			
+		};
+		
+		//Keep all association of Segmented and GT
+		class AllZoneAsso{
+		public:
+			std::vector<ZoneAsso> zones;
+			
+			std::vector <std::pair<int, int> > associations;
+			
+			AllZoneAsso(){};
+			void FromTag(const tag2tagMapper& tag){
+				for( auto it2 = tag.begin(); it2!= tag.end(); it2++ ){
+					std::cout << "Adding " << it2-> first << std::endl;
+					ZoneAsso z(it2->first);
+					z.addTag(it2->second);
+					zones.push_back(z);
+				}
+				assert(zones.size() == tag.size());
+			}
+			
+			void sort(){
+				for( auto it = zones.begin() ; it != zones.end() ; ++it ){	
+					it->sort();
+				}
+				std::sort(zones.begin(), zones.end(), []( const ZoneAsso& a, const ZoneAsso& b)
+				{						
+					return a.other_zones[0].size() > b.other_zones[0].size();
+				});
+				
+		
+			}
+			
+			bool isAsso(int i){
+				for(auto it = associations.begin() ; it != associations.end() ; ++it){
+					if(i == it->second){
+						return true;
+					}
+				}
+				return false;
+			}
+			
+			void calculateAsso(){
+// 				print();
+				sort();
+				std::cout << "\nAfter sort" << std::endl;
+// 				print();
+				for( auto it = zones.begin() ; it != zones.end() ; ++it ){	
+					int segmented = it->pixel_value;
+					int pos = 0;
+					int gt = -1;
+					
+					while(pos < it->other_zones.size() && (isAsso(gt) == true || gt == -1 ) ){
+						gt = it->other_zones[pos].pixel_value;
+						++pos;
+					}
+					
+					if(gt != -1){
+						associations.push_back(std::pair<int, int>(segmented, gt));
+					}
+					
+				}
+			}
+			
+			void print(){
+				for( auto it = zones.begin() ; it != zones.end() ; ++it ){	
+					it->print();
+				}
+			}
+			
+			
+			
+		};
+
 		
 		struct results{
 			double time;

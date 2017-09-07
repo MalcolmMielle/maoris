@@ -286,7 +286,7 @@ int main(int argc, char** argv){
 		
 		if(boost::filesystem::is_directory(p)){
 						
-			for(int test_what = 1 ; test_what < 2 ; ++test_what){
+			for(int test_what = 1 ; test_what < 5 ; ++test_what){
 				
 				AASS::maoris::EvaluationParam evalparam;
 				

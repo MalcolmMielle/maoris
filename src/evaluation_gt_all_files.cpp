@@ -173,10 +173,10 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 	AASS::maoris::GraphZone graph_slam;
 	
-	graph_slam.setThreshold(0.55);
+	graph_slam.setThreshold(0.3);
 	graph_slam.setMargin(0.1);
 	graph_slam.setThresholdFusionRipples(40);
-	graph_slam.setThresholdFusionDoors(17);
+	graph_slam.setThresholdFusionDoors(40);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
@@ -254,7 +254,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::imshow("GT", img_hist_equalizedgt);
 // 	cv::waitKey(0);
 	
-	eval.compare(graphmat, GT_segmentation, time, file);
+	eval.compare(graphmat_straight, GT_segmentation, time, file);
 	std::cout << "SIZE " << eval.size() << std::endl;
 }
 
