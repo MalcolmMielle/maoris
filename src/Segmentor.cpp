@@ -103,10 +103,10 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 // 	graph_src.draw(copyt);
 // 	cv::imshow("ripples", copyt);
 // 	cv::waitKey(0);
-// 	
+// // 	
 	end_process = getTime();	decompose_time = end_process - begin_process;
 	time = time + decompose_time;
-	std::cout << "Ripples: " << decompose_time << std::endl;
+// 	std::cout << "Ripples: " << decompose_time << std::endl;
 	
 	begin_process = getTime();
 // 	graph_src.updatePCA();
@@ -124,13 +124,14 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	
 	graph_src.removeDoors();
 	
-	std::cout << " graph_src.getThresholdFusionDoors(); " << graph_src.getThresholdFusionDoors() << std::endl;
-	std::cout << " graph_src.getThreshold(); " << graph_src.getT() << std::endl;
-	std::cout << " graph_src.getThresholdmargin(); " << graph_src.getMargin() << std::endl;
-	std::cout << " graph_src.getThresholdFusionRipples(); " << graph_src.getThresholdFusionRipples() << std::endl;
+// 	std::cout << " graph_src.getThresholdFusionDoors(); " << graph_src.getThresholdFusionDoors() << std::endl;
+// 	std::cout << " graph_src.getThreshold(); " << graph_src.getT() << std::endl;
+// 	std::cout << " graph_src.getThresholdmargin(); " << graph_src.getMargin() << std::endl;
+// 	std::cout << " graph_src.getThresholdFusionRipples(); " << graph_src.getThresholdFusionRipples() << std::endl;
 // 		cv::Mat copytt;
 // 	outer.copyTo(copytt);
 // 	graph_src.drawSimple(copytt);
+// 	std::cout << "Num of nodes " << graph_src.getNumVertices() << std::endl;
 // 	cv::imshow("s_after doors", copytt);
 // 	cv::waitKey(0);
 
@@ -138,22 +139,25 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	
 	int size_to_remove = 100;
 	graph_src.removeVertexUnderSize(size_to_remove, true);
-	graph_src.removeLonelyVertices();
+	if(graph_src.getNumVertices() > 1 ){
+		graph_src.removeLonelyVertices();
+	}
 	end_process = getTime();	decompose_time = end_process - begin_process;
 	time = time + decompose_time;
 	
-	std::cout << "watershed: " << decompose_time << std::endl;
+// 	std::cout << "watershed: " << decompose_time << std::endl;
 	
-	if(graph_src.lonelyVertices())
-		throw std::runtime_error("Fuck you lonelyness");	
-	
+	if(graph_src.getNumVertices() > 1 ){
+		if(graph_src.lonelyVertices())
+			throw std::runtime_error("Fuck you lonelyness");	
+	}
 	begin_process = getTime();
 	findLimits(outer, graph_src);
 // 	addHoles(src, contours, hierarchy, graph_src);
 	end_process = getTime();	decompose_time = end_process - begin_process;
 	time = time + decompose_time;
 	
-	std::cout << "Drawing" << std::endl;
+// 	std::cout << "Drawing" << std::endl;
 	cv::Mat copy;
 	outer.copyTo(copy);
 	

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <fstream>
 #include <sys/stat.h>
+#include <cmath>
 
 #include <boost/filesystem.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -104,6 +105,8 @@ namespace AASS{
 			std::vector <std::pair<int, int> > associations;
 			
 			AllZoneAsso(){};
+			
+			size_t size() const {return associations.size();}
 			void FromTag(const tag2tagMapper& tag){
 				for( auto it2 = tag.begin(); it2!= tag.end(); it2++ ){
 					std::cout << "Adding " << it2-> first << std::endl;

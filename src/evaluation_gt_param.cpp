@@ -228,9 +228,9 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	
 // 	cv::Mat img_hist_equalized;
 // 	cv::equalizeHist(graphmat, img_hist_equalized);
-// 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
+// // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
 // 	cv::imshow("GRAPH", img_hist_equalized);
-	
+// 	
 //     cv::Mat graphmat_vis = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.draw(graphmat_vis);
 // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
@@ -286,7 +286,7 @@ int main(int argc, char** argv){
 		
 		if(boost::filesystem::is_directory(p)){
 						
-			for(int test_what = 1 ; test_what < 5 ; ++test_what){
+			for(int test_what = 2 ; test_what < 5 ; ++test_what){
 				
 				AASS::maoris::EvaluationParam evalparam;
 				
@@ -297,17 +297,17 @@ int main(int argc, char** argv){
 				if(test_what == 1){
 					t = 0;
 					step = 0.05;
-					end = 0.85;
+					end = 1;
 				}
 				else if(test_what == 2){
 					t = 0;
 					step = 0.05;
-					end = 0.85;
+					end = 1;
 				}
 				else if(test_what == 3){
-					t = 30;
+					t = 00;
 					step = 5;
-					end = 65;
+					end = 100;
 				}
 				else if(test_what == 4){
 					t = 0;

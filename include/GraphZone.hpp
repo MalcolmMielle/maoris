@@ -398,6 +398,7 @@ inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawEvaluati
 	int count = 1;
 	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
 	//vertices access all the vertix
+// 	std::cout << "DRAWING nodes " << (*this).getNumVertices() << std::endl;
 	for (vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first) {
 		
 		if(drawmat.channels() == 1){
@@ -409,6 +410,8 @@ inline void AASS::maoris::GraphZoneInterface<VertexType, EdgeType>::drawEvaluati
 			color[2] = count;
 		}
 		count++;
+		
+// 		std::cout << "DRAW with color " << count << std::endl;
 		
 		VertexZone v = *vp.first;
 		
