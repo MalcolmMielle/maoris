@@ -18,7 +18,6 @@
 
 #include "ZoneExtractor.hpp"
 #include "FuzzyOpening.hpp"
-#include "Kmean.hpp"
 #include "ZoneReducer.hpp"
 
 #include "Evaluation/Evaluation.hpp"

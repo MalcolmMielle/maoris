@@ -14,7 +14,6 @@
 
 #include "ZoneExtractor.hpp"
 #include "FuzzyOpening.hpp"
-#include "Kmean.hpp"
 #include "ZoneReducer.hpp"
 
 int i = 0;

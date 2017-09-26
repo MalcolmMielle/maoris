@@ -1,17 +1,31 @@
-# RSI : robust sketch integration
+# MAORIS : MAp Of RIpples' Segmentation
 
-An overall super needed README
+Cutting most types of maps in smaller meaningful bits.
 
-test_pca : compute the zone of a bunch a image in a folder
+## Description
 
-test_hunagrian : test the hungarian library
+This program segment maps in semantically meaningful parts, such as rooms and corridors. It has been tested on robot build maps and sketch maps, but the principle can easily be extended to other type of maps such as city maps.
 
-test_zone_hungarian_itself : match a graph zone extracted from an image onto itself
+![Image of a segmentation](https://https://github.com/MalcolmMielle/maoris/Images/maoris_NLB_straighten_color.png)
+![Image of another segmentation](https://https://github.com/MalcolmMielle/maoris/Images/maoris_Freiburg101_scan_straighten_color.png)
 
-test_zone_hungarian : match two grah from different images but from same environment.
+It also provides a way to evaluate and test your own segmentation using [Matthews Correlation Coefficient](https://en.wikipedia.org/wiki/Matthews_correlation_coefficient).
 
+## Paper 
 
-## Best executables
+The paper describing the method has been submitted to ICRA2017 and is waiting for reviewing. It should soon be available on Arxiv.
+
+## How to use
+
+Compile by doing 
+
+```
+mkdir release
+cmake ..
+make
+```
+
+Then you will have those executables:
 
 * evaluation_2files_fodler : compare segmented images files from two folders
 
@@ -19,6 +33,10 @@ test_zone_hungarian : match two grah from different images but from same environ
 
 * evaluation_gt : compare a map with a segmented ground truth
  
-* evaluation_gt_all_files : compare all maps in a folder to all segmented ground truth in another, draw them
+* evaluation_gt_all_files : compare all maps in a folder to all segmented ground truth in another
 
-* evaluation_gt_param : evaluate t and m parameters
+* evaluation_gt_param : evaluate maoris' parameters
+
+The arguments of all programs are given in the command line as in `evaluation_gt_all_files folder1 folder2 should_draw`.
+
+

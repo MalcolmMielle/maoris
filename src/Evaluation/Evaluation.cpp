@@ -125,7 +125,7 @@ void AASS::maoris::Evaluation::calculate()
 {
 	_mean_p = mean<double>(_precision);
 	
-	assert(std::isnan<double>(_mean_p) == false);
+	assert(std::isnan(_mean_p) == false);
 	_mean_r = mean<double>(_recall);
 	_mean_ir = mean<double>(_inverse_recall);
 	
@@ -243,17 +243,17 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		
 // 		std::cout << "tp fp tn fn " << tp_t << " " << fp_t << " " << tn_t << " " << fn_t << std::endl;
 		
-		assert(std::isnan<double>(tp_t + fp_t) == false);
-		assert(std::isnan<double>(tp_t + fn_t) == false);
-		assert(std::isnan<double>(fp_t + tn_t) == false);
+		assert(std::isnan(tp_t + fp_t) == false);
+		assert(std::isnan(tp_t + fn_t) == false);
+		assert(std::isnan(fp_t + tn_t) == false);
 		
 		precisions.push_back(tp_t / (tp_t + fp_t));
 		recalls.push_back(tp_t / (tp_t + fn_t));
 		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
 		
-		assert(std::isnan<double>(tp_t / (tp_t + fp_t)) == false);
-		assert(std::isnan<double>(tp_t / (tp_t + fn_t)) == false);
-		assert(std::isnan<double>(fp_t / (fp_t + tn_t)) == false);
+		assert(std::isnan(tp_t / (tp_t + fp_t)) == false);
+		assert(std::isnan(tp_t / (tp_t + fn_t)) == false);
+		assert(std::isnan(fp_t / (fp_t + tn_t)) == false);
 		
 		
 // 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
@@ -356,7 +356,7 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	_tn.push_back(mean<double>(tn));
 	_fn.push_back(mean<double>(fn));
 	
-	assert(std::isnan<double>(mean<double>(precisions)) == false);
+	assert(std::isnan(mean<double>(precisions)) == false);
 	
 	
 }

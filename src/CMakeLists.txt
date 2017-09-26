@@ -5,7 +5,7 @@
 add_subdirectory(Evaluation)
 
 add_library(MAORIS
-			FuzzyOpening.cpp ZoneExtractor.cpp Kmean.cpp GraphZone.cpp Zone.cpp Segmentor.cpp
+			FuzzyOpening.cpp ZoneExtractor.cpp GraphZone.cpp Zone.cpp Segmentor.cpp
 			)
 
 
