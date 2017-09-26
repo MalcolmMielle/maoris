@@ -42,7 +42,7 @@ add_subdirectory(include)
 
 # install(TARGETS rsi RUNTIME DESTINATION bin)
 
-add_subdirectory(Test)
+#add_subdirectory(Test)
 
 
 # uninstall target
