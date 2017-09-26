@@ -27,15 +27,21 @@ make
 
 Then you will have those executables:
 
+### For segmentation:
+
 * evaluation_2files_fodler : compare segmented images files from two folders
 
-* evaluation_2gt : compare two segmented images
+* evaluation_gt : compare a map with a segmented ground truth image
 
-* evaluation_gt : compare a map with a segmented ground truth
+### For evaluation
+
+* evaluation_2gt : compare two segmented images
  
-* evaluation_gt_all_files : compare all maps in a folder to all segmented ground truth in another
+* evaluation_gt_all_files : compare all maps in a folder to all segmented ground truths in another folder
+This file returns a gnuplot dat file named `maoris_all_measures.dat` with all the data from the segmentation.
 
 * evaluation_gt_param : evaluate maoris' parameters
+This file returns four gnuplot dat files named `maoris_param_threshold.dat`, `maoris_param_margin.dat`, `maoris_param_ripples.dat`, and `maoris_param_doors.dat`, with all the data from the segmentation for each parameters.
 
 The arguments of all programs are given in the command line as in `evaluation_gt_all_files folder1 folder2 should_draw`.
 
