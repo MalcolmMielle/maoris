@@ -37,7 +37,7 @@ namespace AASS{
 		protected:
 			bool _use_cvMat;
 			
-			size_t _value;
+			int _value;
 			
 			//Change it for a set for constant time find !
 			std::deque <cv::Point2i> _zone;
@@ -115,8 +115,8 @@ namespace AASS{
 			const cv::Point2i& operator[](const int i) const {return _zone[i];};
 			
 			void setValue(size_t i){_value = i;}
-			size_t getValue(){return _value;}
-			size_t getValue() const {return _value;}
+			int getValue(){return _value;}
+			int getValue() const {return _value;}
 			const std::deque <cv::Point2i >& getZone() const {return _zone;}
 		// 	std::deque <cv::Point2i >& getZone(){return _zone;}
 			const cv::Mat& getZoneMat() const {return _zone_mat;}
