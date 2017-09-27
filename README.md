@@ -1,6 +1,6 @@
 # MAORIS : MAp Of RIpples' Segmentation
 
-Cutting most types of maps in smaller meaningful bits.
+Cutting most types of maps in smaller more meaningful bits.
 
 ## Description
 
