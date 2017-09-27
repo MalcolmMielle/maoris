@@ -221,8 +221,8 @@ namespace AASS{
 			void removeRiplesv3(int dist = -1);
 				
 			void updateAllEdges(){
-				auto vp = boost::vertices((*this));
-				for(vp ; vp.first != vp.second; ++vp.first){
+				
+				for(auto vp = boost::vertices((*this)); vp.first != vp.second; ++vp.first){
 					auto v = *vp.first;
 					EdgeIteratorZone out_i, out_end;
 					//Since we fuse the old zone in biggest we only need to link them to biggest
@@ -291,8 +291,7 @@ namespace AASS{
 			
 			double variance (std::vector<double> input, double mean){
 				double variance = 0 ;
-				auto it = input.begin();
-				for(it ; it != input.end() ; ++it){
+				for(auto it = input.begin() ; it != input.end() ; ++it){
 					variance = variance + ( (*it - mean) * (*it - mean) );
 // 					std::cout << "variance " << variance << std::endl;
 				}
@@ -302,8 +301,7 @@ namespace AASS{
 				
 			double mean(std::vector<double> input){
 				double sum = 0;
-				auto it = input.begin();
-				for(it ; it != input.end() ; ++it){
+				for(auto it = input.begin() ; it != input.end() ; ++it){
 					sum = sum + (*it);
 				}
 				return sum / (double) input.size();
@@ -311,8 +309,7 @@ namespace AASS{
 				
 			std::vector<double> standardization (std::vector<double> input, double mean, double sdeviation){
 				std::vector<double> out;
-				auto it = input.begin();
-				for(it; it != input.end() ; ++it){
+				for(auto it = input.begin(); it != input.end() ; ++it){
 					double v_value = (*it - mean) / sdeviation;
 					out.push_back(v_value);
 				}

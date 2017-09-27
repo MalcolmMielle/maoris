@@ -219,7 +219,7 @@ namespace AASS{
 			}
 			
 
-			///@brief return the point in contact between the zones
+			///@brief return the points in contact between the zones
 			std::vector< std::vector<cv::Point2i > > getContactPointSeparated(const Zone& zone){
 				assert(_use_cvMat == true && "We need the opencv::Mat for this function");
 				assert(zone.useCvMat() == true && "We need the opencv::Mat for this function. input zone");
@@ -266,7 +266,7 @@ namespace AASS{
 				
 				std::vector<std::pair<int, int > > seen;
 				std::vector<cv::Point2i> tmp;
-				bool flag = false;
+				bool fadding_points = false;
 				for(int j = 0 ; j < _contours.size() ; ++j){
 					
 					auto it = _contours[j].begin();
@@ -289,12 +289,12 @@ namespace AASS{
 						if(!asbeenseeen){
 							if(lambda(it->x, it->y, copyTest)){
 								tmp.push_back(*it);
-								flag = true;
+								fadding_points = true;
 							}
-							else if(flag == true){
+							else if(fadding_points == true){
 								contact_point.push_back(tmp);
 								tmp.clear();
-								flag = false;
+								fadding_points = false;
 							}
 						}
 						
