@@ -266,7 +266,7 @@ namespace AASS{
 				
 				std::vector<std::pair<int, int > > seen;
 				std::vector<cv::Point2i> tmp;
-				bool fadding_points = false;
+				bool adding_points = false;
 				for(int j = 0 ; j < _contours.size() ; ++j){
 					
 					auto it = _contours[j].begin();
@@ -279,22 +279,22 @@ namespace AASS{
 					
 					for(int i = 0 ; i < _contours[j].size() ; ++i){
 				
-						bool asbeenseeen = false;
+						bool hasbeenseeen = false;
 						for(size_t i = 0 ; i < seen.size() ; ++i){
 							if(seen[i].first == it->x && seen[i].second == it->y){
-								asbeenseeen = true;
+								hasbeenseeen = true;
 							}
 						}
 						seen.push_back(std::pair<int, int>(it->x, it->y));
-						if(!asbeenseeen){
+						if(!hasbeenseeen){
 							if(lambda(it->x, it->y, copyTest)){
 								tmp.push_back(*it);
-								fadding_points = true;
+								adding_points = true;
 							}
-							else if(fadding_points == true){
+							else if(adding_points == true){
 								contact_point.push_back(tmp);
 								tmp.clear();
-								fadding_points = false;
+								adding_points = false;
 							}
 						}
 						
