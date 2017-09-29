@@ -13,7 +13,7 @@ It also provides a way to evaluate and test your own segmentation using [Matthew
 
 ## Paper 
 
-The paper describing the method has been submitted to ICRA2017 and is waiting for reviewing. It should soon be available on Arxiv.
+The paper describing the method has been submitted to ICRA2017 and is waiting for reviewing. The preprint version is [available on Arxiv](https://arxiv.org/abs/1709.09899).
 
 ## How to use
 
