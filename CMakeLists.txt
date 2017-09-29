@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(rsi)
+project(maoris)
 
 find_package( OpenCV REQUIRED)
 find_package( bettergraph REQUIRED)
