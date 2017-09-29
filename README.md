@@ -15,7 +15,14 @@ It also provides a way to evaluate and test your own segmentation using [Matthew
 
 The paper describing the method has been submitted to ICRA2017 and is waiting for reviewing. The preprint version is [available on Arxiv](https://arxiv.org/abs/1709.09899).
 
-## How to use
+## How to compile
+
+### Dependencies
+
+* boost
+* openCV 2.9 or more (openCV 3 included)
+* [bettergraph](https://github.com/MalcolmMielle/BetterGraph)
+* [VoDiGrEx](https://github.com/MalcolmMielle/VoDiGrEx)
 
 Compile by doing 
 
@@ -24,8 +31,19 @@ mkdir release
 cmake ..
 make
 ```
+If one need to use maoris for other project you can do 
+```
+sudo make install
+```
+to install and
+```
+sudo make uninstall
+```
+To uninstall.
 
-Then you will have those executables:
+## How to use maoris
+
+After compilation, you will have those executables:
 
 ### For segmentation:
 
