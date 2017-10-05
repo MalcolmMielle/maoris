@@ -11,6 +11,8 @@ This program segment maps in semantically meaningful parts, such as rooms and co
 
 It also provides a way to evaluate and test your own segmentation using [Matthews Correlation Coefficient](https://en.wikipedia.org/wiki/Matthews_correlation_coefficient).
 
+A little bit more about this [here](https://wordpress.com/post/malcolmmielle.wordpress.com/1125?retry=1).
+
 ## Paper 
 
 The paper describing the method has been submitted to ICRA2017 and is waiting for reviewing. The preprint version is [available on Arxiv](https://arxiv.org/abs/1709.09899).
