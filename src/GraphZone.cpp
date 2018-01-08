@@ -324,7 +324,7 @@ void AASS::maoris::GraphZone::getAllNodeRemovedWatershed(AASS::maoris::GraphZone
 			VertexZone targ = boost::target(e_second, (*this));
 		
 			//Needed to not consider the new added vertex since they are supposed to be stopping point of the recursion.
-			//This is a marker for node that are here seen the begining
+			//This is a marker for node that are here seen the begining. TODO USELESS
 			bool is_old = false;
 			for(size_t i = 0; i < listedge.size() ; ++i){
 				if(listedge[i] == e_second)
@@ -390,7 +390,8 @@ void AASS::maoris::GraphZone::getAllNodeRemovedWatershed(AASS::maoris::GraphZone
 						
 					try{
 						// removeVertexWhilePreservingEdges(targ, first_vertex);
-						to_be_removed.push_back(targ);
+						to_be_removed.push_back(targ); 
+                        //TODO save a recursion by doing ++out here !
 					}
 					catch(std::exception& e){
 						std::cout << "Zone had more than one shape. It's fine at this point in the proccess. Continue" << std::endl;
