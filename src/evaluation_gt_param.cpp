@@ -13,6 +13,8 @@
 #include <sys/stat.h>
 #include <string>
 #include <sstream>
+#include <tuple>
+#include <string>
 
 #include <boost/filesystem.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -178,19 +180,19 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 2){
-		graph_slam.setThreshold(0.3);
+		graph_slam.setThreshold(0.30);
 		graph_slam.setMargin(t);
 		graph_slam.setThresholdFusionRipples(40);
 		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 3){
-		graph_slam.setThreshold(0.3);
+		graph_slam.setThreshold(0.30);
 		graph_slam.setMargin(0.1);
 		graph_slam.setThresholdFusionRipples(t);
 		graph_slam.setThresholdFusionDoors(40);
 	}
 	if(test_what == 4){
-		graph_slam.setThreshold(0.3);
+		graph_slam.setThreshold(0.30);
 		graph_slam.setMargin(0.1);
 		graph_slam.setThresholdFusionRipples(40);
 		graph_slam.setThresholdFusionDoors(t);
@@ -210,6 +212,9 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	makeGraph(slam, graph_slam, time);
 	AASS::maoris::Segmentor segmenteur;
 	time = segmenteur.segmentImage(slam, graph_slam);
+
+//    std::cout << "NB OF ZONES " << graph_slam.getNumVertices() << std::endl;
+
 	cv::Mat segmented_map = segmenteur.getSegmentedMap();
 	
 	std::cout << "Total time: " << time << std::endl;
@@ -221,13 +226,13 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	cv::Mat slam1 = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
     cv::Mat graphmat = cv::Mat::zeros(slam1.size(), CV_8U);
     graph_slam.drawEvaluation(graphmat);
-	
+
 // 	cv::Mat partial = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.drawPartial(partial);
 	
 // 	cv::Mat img_hist_equalized;
 // 	cv::equalizeHist(graphmat, img_hist_equalized);
-// // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
+ // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
 // 	cv::imshow("GRAPH", img_hist_equalized);
 // 	
 //     cv::Mat graphmat_vis = cv::Mat::zeros(slam1.size(), CV_8U);
@@ -247,6 +252,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::waitKey(0);
 	
 	cv::Mat GT_segmentation = AASS::maoris::segment_Ground_Truth(image_GT);
+    /// THIS ONE IS USE IF YOU NEED STRAIGHTEN MAPS
 	cv::Mat graphmat_straight = AASS::maoris::segment_Ground_Truth(segmented_map);
 	
 // 	cv::Mat img_hist_equalizedgt;
@@ -259,134 +265,192 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 }
 
 
-int main(int argc, char** argv){
-	
+std::tuple<std::string, std::vector<std::string> > getMapsAndGT(){
+
+    std::string in = "o";
+    std::cout << "Please input a source folder for the maps to segment" << std::endl;
+    std::getline(std::cin, in);
+
+    if(in.back() != '/') {
+        in = in + "/";
+    }
+
+    boost::filesystem::path p(in);
+    while(!boost::filesystem::exists(p) || !boost::filesystem::is_directory(p)) {
+        std::cout << "need a valid path toward the images - please add new input" << std::endl;
+        std::getline(std::cin, in);
+
+        if(in.back() != '/') {
+            in = in + "/";
+        }
+
+        boost::filesystem::path ptmp(in);
+        p = ptmp;
+    }
+
+    std::string gt = "o";
+    std::vector<std::string> all_gt;
+    std::cout << "Please input as many gt folder as you want. Input nothing if done." << std::endl;
+    while ( !gt.empty() ) {
+        std::getline(std::cin, gt);
+
+        std::cout << "Got : " << gt << std::endl;
+        boost::filesystem::path p(gt);
+        if(!boost::filesystem::exists(p) || !boost::filesystem::is_directory(p)) {
+            std::cout << "need a valid path toward the images - ignoring input" << std::endl;
+        }
+        else{
+            if(gt.back() != '/') {
+                gt = gt + "/";
+            }
+            all_gt.push_back(gt);
+        }
+    }
+    std::cout << "Done, lets' do it" << std::endl;
+    return std::make_tuple(in, all_gt);
+
+}
+
+
+
+
+int main(int argc, char** argv) {
+
 // 	int argc = boost::unit_test::framework::master_test_suite().argc;
 // 	char** argv = boost::unit_test::framework::master_test_suite().argv;
-		
-	
-	
-	
-	std::string path_file = argv[1];
-	std::string path_gt = argv[2];
+
+
+    std::vector<std::string> gts;
+    std::string maps;
+    std::tie(maps, gts) = getMapsAndGT();
+
+//	std::string path_file = argv[1];
+//	std::string path_gt = argv[2];
 // 	std::string file = "../../Test/Thermal/cold.jpg";
-	
-	boost::filesystem::path p(path_file);
-	boost::filesystem::path p_gt(path_gt);
-	try{
-		if(! boost::filesystem::exists(p) || ! boost::filesystem::exists(p_gt) ){
-			std::cout << "need a valid path toward the images" << std::endl;
-			return 0;
-		}
-		if(! boost::filesystem::is_directory(p) || ! boost::filesystem::is_directory(p_gt) ){
-			std::cout << "need a valid path folder toward the images" << std::endl;
-			return 0;
-		}
-		
-		if(boost::filesystem::is_directory(p)){
-						
-			for(int test_what = 2 ; test_what < 5 ; ++test_what){
-				
-				AASS::maoris::EvaluationParam evalparam;
-				
-				double t = 0;
-				double step = 0;
-				double end = 0;
-				
-				if(test_what == 1){
-					t = 0;
-					step = 0.05;
-					end = 1;
-				}
-				else if(test_what == 2){
-					t = 0;
-					step = 0.05;
-					end = 1;
-				}
-				else if(test_what == 3){
-					t = 00;
-					step = 5;
-					end = 100;
-				}
-				else if(test_what == 4){
-					t = 0;
-					step = 5;
-					end = 105;
-				}
-				else{
-					throw std::runtime_error("TOO FAR");
-				}
-				
-				
-				
-				
-				for(t; t < end ; t = t + step){
-	// 				for(m = 0; m <= 1 ; m = m + 0.05){
-				
-				
-						AASS::maoris::Evaluation eval;
-						
-						std::vector<boost::filesystem::path> v;
-						//Get all files and sort them
-						std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
-						std::sort(v.begin(), v.end());
-						
-						
-						
-			// 			int i = 0;
-						for (std::vector<boost::filesystem::path>::const_iterator it (v.begin()); it != v.end(); it = ++it)
-						{
-							boost::filesystem::path fn = *it;
-							
-							std::string name = fn.filename().string();
-							std::string model = path_gt + name;
-							
-							std::cout << "Process " << fn.string() << " with model " << model << std::endl;
-							
-							process(fn.string(), model, eval, t, test_what);
-							
-							std::cout << "SIZE " << eval.size() << std::endl;
-			// 				if(i == 3){
-			// 					return 0;
-			// 				}
-			// 				++i;
-						}
-						
-						eval.calculate();
-						evalparam.add(eval, t, -1);
-						
-					}
-					
-					//add precision mean and recal + nb of file
-					std::string result_file;
-					
-					if(test_what == 1){
-						result_file = "maoris_param_threshold.dat";
-					}
-					if(test_what == 2){
-						result_file = "maoris_param_margin.dat";
-					}
-					if(test_what == 3){
-						result_file = "maoris_param_ripples.dat";
-					}
-					if(test_what == 4){
-						result_file = "maoris_param_doors.dat";
-					}
-					
-					std::cout << "SIZE " << evalparam.size() << std::endl;
-					evalparam.exportAll(result_file);
-	// 			}
-			}
-		}
-	}
-	catch (const boost::filesystem::filesystem_error& ex)
-	{
-		std::cout << ex.what() << '\n';
-	}
-	
-	//add precision mean and recal + nb of file
-// 	std::string result_file = "maoris_param_doors.dat";
-// 	std::cout << "SIZE " << evalparam.size() << std::endl;
-// 	evalparam.exportAll(result_file);
+
+
+
+    for (int test_what = 1; test_what < 2; ++test_what) {
+
+        AASS::maoris::EvaluationParam evalparam;
+
+        double t = 0;
+        double step = 0;
+        double end = 0;
+
+        //Threshold
+        if (test_what == 1) {
+            t = 0;
+            step = 0.05;
+            end = 1;
+        }
+        //Margin
+        else if (test_what == 2) {
+            t = 0;
+            step = 0.05;
+            end = 1;
+        }
+        //Ripples
+        else if (test_what == 3) {
+            t = 0;
+            step = 5;
+            end = 100;
+        }
+        //Doors
+        else if (test_what == 4) {
+            t = 0;
+            step = 5;
+            end = 105;
+        } else {
+            throw std::runtime_error("TOO FAR");
+        }
+
+
+        try {
+
+            for (auto gt : gts) {
+
+                boost::filesystem::path p(maps);
+                boost::filesystem::path p_gt(gt);
+
+
+                if (!boost::filesystem::exists(p) || !boost::filesystem::exists(p_gt)) {
+                    std::cout << "need a valid path toward the images" << std::endl;
+                    return 0;
+                }
+                if (!boost::filesystem::is_directory(p) || !boost::filesystem::is_directory(p_gt)) {
+                    std::cout << "need a valid path folder toward the images" << std::endl;
+                    return 0;
+                }
+
+                if (boost::filesystem::is_directory(p)) {
+
+                    for (t; t < end; t = t + step) {
+                        // 				for(m = 0; m <= 1 ; m = m + 0.05){
+
+                        AASS::maoris::Evaluation eval;
+
+                        std::vector<boost::filesystem::path> v;
+                        //Get all files and sort them
+                        std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(),
+                                  std::back_inserter(v));
+                        std::sort(v.begin(), v.end());
+
+
+
+                        // 			int i = 0;
+                        for (std::vector<boost::filesystem::path>::const_iterator it(v.begin());
+                             it != v.end(); it = ++it) {
+                            boost::filesystem::path fn = *it;
+
+                            std::string name = fn.filename().string();
+                            std::string model = gt + name;
+
+                            std::cout << "Process " << fn.string() << " with model " << model << std::endl;
+
+                            process(fn.string(), model, eval, t, test_what);
+
+                            std::cout << "SIZE " << eval.size() << std::endl;
+                            // 				if(i == 3){
+                            // 					return 0;
+                            // 				}
+                            // 				++i;
+                        }
+
+                        eval.calculate();
+                        evalparam.add(eval, t);
+
+                    }
+                }
+            }
+
+            //add precision mean and recal + nb of file
+            std::string result_file;
+
+            if (test_what == 1) {
+                result_file = "maoris_param_threshold.dat";
+            }
+            if (test_what == 2) {
+                result_file = "maoris_param_margin.dat";
+            }
+            if (test_what == 3) {
+                result_file = "maoris_param_ripples.dat";
+            }
+            if (test_what == 4) {
+                result_file = "maoris_param_doors.dat";
+            }
+
+            std::cout << "SIZE " << evalparam.size() << std::endl;
+            evalparam.exportAll(result_file);
+        }
+        catch (const boost::filesystem::filesystem_error &ex) {
+            std::cout << ex.what() << '\n';
+        }
+    }
+
+    //add precision mean and recal + nb of file
+    // 	std::string result_file = "maoris_param_doors.dat";
+    // 	std::cout << "SIZE " << evalparam.size() << std::endl;
+    // 	evalparam.exportAll(result_file);
 
 }

@@ -75,14 +75,18 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	double t_doors = graph_src.getThresholdFusionDoors();
 	
 	graph_src = zone_maker.getGraph();
+
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 	graph_src.setThreshold(thres);
 	graph_src.setMargin(marg);
 	graph_src.setThresholdFusionRipples(t_ripples);
 	graph_src.setThresholdFusionDoors(t_doors);
 	
-// 	graph_src.removeVertexValue(0);	
+// 	graph_src.removeVertexValue(0);
+    ///THIS IS JUST HERE TO SPEED THINGS UP... So small vertex are removed from image to speed up computation.
 	graph_src.removeVertexUnderSize(size_to_remove2, true);
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 
 	graph_src.useCvMat(true);
 	
@@ -95,7 +99,9 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	
 // 	graph_src.updatePCA();
 	graph_src.updateContours();
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	graph_src.removeRiplesv3();
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 	
 // 	cv::Mat copyt;
@@ -111,9 +117,11 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	begin_process = getTime();
 // 	graph_src.updatePCA();
 	graph_src.updateContours();
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 	//Watershed Algorithm
 	graph_src.watershed();
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 // 	cv::Mat copytsss;
 // 	outer.copyTo(copytsss);
@@ -123,6 +131,7 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 // 	
 	
 	graph_src.removeDoors();
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 // 	std::cout << " graph_src.getThresholdFusionDoors(); " << graph_src.getThresholdFusionDoors() << std::endl;
 // 	std::cout << " graph_src.getThreshold(); " << graph_src.getT() << std::endl;
@@ -138,21 +147,28 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	
 	
 	int size_to_remove = 100;
+    //TODO: Should actually fuse
 	graph_src.removeVertexUnderSize(size_to_remove, true);
+
+    //TODO: REMOVE THIS
 	if(graph_src.getNumVertices() > 1 ){
 		graph_src.removeLonelyVertices();
 	}
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	end_process = getTime();	decompose_time = end_process - begin_process;
 	time = time + decompose_time;
 	
 // 	std::cout << "watershed: " << decompose_time << std::endl;
-	
+
+    //TODO HENCE REMOVE THIS
 	if(graph_src.getNumVertices() > 1 ){
 		if(graph_src.lonelyVertices())
 			throw std::runtime_error("Fuck you lonelyness");	
 	}
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	begin_process = getTime();
 	findLimits(outer, graph_src);
+//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 // 	addHoles(src, contours, hierarchy, graph_src);
 	end_process = getTime();	decompose_time = end_process - begin_process;
 	time = time + decompose_time;
@@ -169,7 +185,8 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	time = time + decompose_time;
 	
 	_segmented = copy;
-	
+
+//    exit(0);
 	return time;
 	
 }
