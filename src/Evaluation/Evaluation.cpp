@@ -497,8 +497,8 @@ void AASS::maoris::compare_images(cv::Mat GT_segmentation_in, cv::Mat DuDe_segme
 	cum_total=0;
 			std::cout << "Regions in DuDe: "<< std::endl;
 			
-	double fp;
-	double tp_temp;
+	double fp = 0;
+	double tp_temp = 0;
 			
 	for( tag2tagMapper::iterator it = DuDe_tag2mapper.begin(); it!= DuDe_tag2mapper.end(); it++ ){
 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
