@@ -348,21 +348,25 @@ int main(int argc, char** argv) {
 
         AASS::maoris::EvaluationParam evalparam;
 
+        double start = 0;
         double t = 0;
         double step = 0;
         double end = 0;
 
+	    //END IS INCLUDED IN THE LOOP
         //Threshold
         if (test_what == 1) {
             std::cout << "THRESHOLD" << std::endl;
             t = 0;
+            start = t;
             step = 0.05;
-            end = 0.05;
+            end = 1;
         }
         //Margin
         else if (test_what == 2) {
             std::cout << "MARGIN" << std::endl;
             t = 0;
+            start = t;
             step = 0.05;
             end = 1;
         }
@@ -370,6 +374,7 @@ int main(int argc, char** argv) {
         else if (test_what == 3) {
             std::cout << "RIPPLES" << std::endl;
             t = 5;
+            start = t;
             step = 5;
             end = 100;
         }
@@ -377,8 +382,9 @@ int main(int argc, char** argv) {
         else if (test_what == 4) {
             std::cout << "DOORS" << std::endl;
             t = 0;
+            start = t;
             step = 5;
-            end = 105;
+            end = 100;
         } else {
             throw std::runtime_error("TOO FAR");
         }
@@ -403,7 +409,7 @@ int main(int argc, char** argv) {
 
                 if (boost::filesystem::is_directory(p)) {
 
-                    for (t; t < end; t = t + step) {
+                    for (t; t <= end; t = t + step) {
                         // 				for(m = 0; m <= 1 ; m = m + 0.05){
 
                         std::cout << "STAT T " << t << std::endl;
@@ -463,7 +469,7 @@ int main(int argc, char** argv) {
             }
 
             std::cout << "SIZE " << evalparam.size() << std::endl;
-            evalparam.exportAll(result_file);
+            evalparam.exportAll(result_file, start, step);
         }
         catch (const boost::filesystem::filesystem_error &ex) {
             std::cout << "ERROR" << ex.what() << '\n';

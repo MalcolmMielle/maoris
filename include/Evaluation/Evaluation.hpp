@@ -288,7 +288,8 @@ namespace AASS{
 			void compare(const cv::Mat& seg, const cv::Mat& GT_segmentation, double time, const std::string& file);
 			void exportAll(const std::string& file_out);
 			double getMatthewsCC(){return _matthewCC;};
-			double getMatthewsCCMedian(){return _matthewCC_median;};
+            double getMatthewsCCMedian(){return _matthewCC_median;};
+            std::vector<double> getAllMatthewsCC(){return _matthewCC_individual;};
 			double getFscore(){return _f1score;}
 			double getGscore(){return _gscore;}
 			double getDOR(){return _dor;}
