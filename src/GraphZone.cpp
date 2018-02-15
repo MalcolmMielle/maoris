@@ -3,7 +3,7 @@
 
 
 
-void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeConnectic){
+void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeConnectic, bool flag_to_test_if_used){
 	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
 	//vertices access all the vertix
 	for (vp = boost::vertices((*this)); vp.first != vp.second;) {
@@ -11,7 +11,12 @@ void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeC
 		++vp.first;
 // 		std::cout << "Remove under size. Size " << (*this)[v].size() << std::endl;
 		if((*this)[v].size() < size){
-			
+
+			if(flag_to_test_if_used) {
+				std::cout << "WHAT THE FUCK WHY REMOVE :( ?" << std::endl;
+				exit(0);
+			}
+
 			if(preserveEdgeConnectic == true){
 				if(getNumEdges(v) > 0){
 					
@@ -538,7 +543,7 @@ void AASS::maoris::GraphZone::watershed(double threshold)
 
 }
 
-
+///@Brief fuse two vertex into one.
 void AASS::maoris::GraphZone::removeVertexWhilePreservingEdges(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v_to_fuse_in, bool createUnBreakableLinks)
 {
 	assert(v != v_to_fuse_in);

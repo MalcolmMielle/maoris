@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <cmath>
+#include <algorithm>
 
 #include <boost/filesystem.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -109,7 +110,7 @@ namespace AASS{
 			size_t size() const {return associations.size();}
 			void FromTag(const tag2tagMapper& tag){
 				for( auto it2 = tag.begin(); it2!= tag.end(); it2++ ){
-					std::cout << "Adding " << it2-> first << std::endl;
+//					std::cout << "Adding " << it2-> first << std::endl;
 					ZoneAsso z(it2->first);
 					z.addTag(it2->second);
 					zones.push_back(z);
@@ -257,7 +258,8 @@ namespace AASS{
 			double _sd_mCC;
 			double _dor;
 			
-			
+			double _max_mcc;
+			double _min_mcc;
 			
 		public:
 			Evaluation(){}
@@ -276,6 +278,9 @@ namespace AASS{
 			double getSDRecall(){return _sd_r;}
 			double getSDInverseRecall(){return _sd_ir;}
 			double getSDMatthewCC(){return _sd_mCC;}
+
+			double getMax(){return _max_mcc;}
+			double getMin(){return _min_mcc;}
 			
 			void calculate();
 			
@@ -283,7 +288,8 @@ namespace AASS{
 			void compare(const cv::Mat& seg, const cv::Mat& GT_segmentation, double time, const std::string& file);
 			void exportAll(const std::string& file_out);
 			double getMatthewsCC(){return _matthewCC;};
-			double getMatthewsCCMedian(){return _matthewCC_median;};
+            double getMatthewsCCMedian(){return _matthewCC_median;};
+            std::vector<double> getAllMatthewsCC(){return _matthewCC_individual;};
 			double getFscore(){return _f1score;}
 			double getGscore(){return _gscore;}
 			double getDOR(){return _dor;}

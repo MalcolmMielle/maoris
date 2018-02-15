@@ -30,8 +30,16 @@ namespace AASS{
 		
 		template<typename T>
 		inline T matthewCC(T tp, T fp, T tn, T fn){
+
+			assert(tp >= 0);
+			assert(fp >= 0);
+			assert(tn >= 0);
+			assert(fn >= 0);
+
 			std::cout << "( (" << tp<< " * "<< tn<< ") - (" << fp << " * " << fn << ") ) / ( std::sqrt( (" << tp << " + " << fp << ") * (" << tp << " + " << fn << ") * (" << tn << " + " << fp << ") * (" << tn << " + " << fn << ") ) ) " << std::endl;
-			return ( (tp * tn) - (fp * fn) ) / ( std::sqrt( (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) ) );
+			auto mcc = ( (tp * tn) - (fp * fn) ) / ( std::sqrt( (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) ) );
+			assert(mcc >= 0 && mcc <= 1);
+			return mcc;
 		}
 		
 		template<typename T>
