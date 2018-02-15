@@ -15,7 +15,7 @@ A little bit more about this [here](https://malcolmmielle.wordpress.com/2017/10/
 
 ## Paper 
 
-The paper describing the method was accepted for publication at ICRA2017 (:D!) and should be publish soon after. The preprint version is [available on Arxiv](https://arxiv.org/abs/1709.09899).
+The paper describing the method was accepted for publication at ICRA2017 (:D!) and should be published soon after the conference. The preprint version is [available on Arxiv](https://arxiv.org/abs/1709.09899).
 
 ## How to compile
 
