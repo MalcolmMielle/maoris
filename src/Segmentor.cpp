@@ -121,7 +121,7 @@ double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZo
 	
 	//Watershed Algorithm
 	graph_src.watershed();
-//	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
+	std::cout << "NB ZONE " << graph_src.getNumVertices() << std::endl;
 	
 // 	cv::Mat copytsss;
 // 	outer.copyTo(copytsss);

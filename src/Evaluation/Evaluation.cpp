@@ -62,7 +62,7 @@ void AASS::maoris::Evaluation::compare(const cv::Mat& seg, const cv::Mat& GT_seg
 	
 //	std::cout << " OldFurniture Precision: " <<Regions.precision << " Recall: "<< Regions.recall << " Inverse recall " << Regions.inverse_recall << std::endl;
 	
-	std::cout << " No_Furniture Precision: " << _precision[_precision.size() - 1] << " Recall: "<< _recall[_precision.size() - 1] << " Inverse recall " << _inverse_recall[_precision.size() - 1] << " time: "<< _time[_precision.size() - 1] <<" Labels " << max <<"  size " << proper_size << " min mcc " << _min_mcc << " max mcc " << _max_mcc  << std::endl;
+	std::cout << " No_Furniture Precision: " << _precision[_precision.size() - 1] << " Recall: "<< _recall[_precision.size() - 1] << " Inverse recall " << _inverse_recall[_precision.size() - 1] << " time: "<< _time[_precision.size() - 1] <<" Labels " << max <<"  size " << proper_size << std::endl;
 	
 	
 }
@@ -225,7 +225,7 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 
     allAsso.calculateAsso();
 	
-// 	std::cout << "There is " << allAsso.size() << " asso " << std::endl;
+ 	std::cout << "There is " << allAsso.size() << " asso " << std::endl;
  	assert(allAsso.size() != 0);
 	
 	
@@ -371,7 +371,8 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	_fp.push_back(mean<double>(fp));
 	_tn.push_back(mean<double>(tn));
 	_fn.push_back(mean<double>(fn));
-	
+
+    std::cout << "Mean precision " << mean<double>(precisions) << std::endl;
 	assert(std::isnan(mean<double>(precisions)) == false);
 	
 	

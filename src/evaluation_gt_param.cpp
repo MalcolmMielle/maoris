@@ -213,7 +213,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	AASS::maoris::Segmentor segmenteur;
 	time = segmenteur.segmentImage(slam, graph_slam);
 
-//    std::cout << "NB OF ZONES " << graph_slam.getNumVertices() << std::endl;
+    std::cout << "NB OF ZONES " << graph_slam.getNumVertices() << std::endl;
 
 	cv::Mat segmented_map = segmenteur.getSegmentedMap();
 	
@@ -259,8 +259,11 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::equalizeHist(GT_segmentation, img_hist_equalizedgt);
 // 	cv::imshow("GT", img_hist_equalizedgt);
 // 	cv::waitKey(0);
-	
-	eval.compare(graphmat, GT_segmentation, time, file);
+
+//    SKETCHES
+//    eval.compare(graphmat, GT_segmentation, time, file);
+//    ROBOT MAPS
+    eval.compare(graphmat_straight, GT_segmentation, time, file);
 	std::cout << "SIZE " << eval.size() << std::endl;
 }
 
@@ -324,13 +327,24 @@ int main(int argc, char** argv) {
     std::string maps;
     std::tie(maps, gts) = getMapsAndGT();
 
-//	std::string path_file = argv[1];
+    int test_what = -1;
+    if(argc >= 2) {
+        test_what = atoi(argv[1]);
+    }
 //	std::string path_gt = argv[2];
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 
+    int which_to_end = 5;
+    if(test_what != -1){
+        assert(test_what <= 4);
+        assert(test_what >= 1);
+        which_to_end = test_what + 1;
+    }else{
+        test_what = 1;
+    }
 
-
-    for (int test_what = 1; test_what < 2; ++test_what) {
+    std::cout << test_what << " " << which_to_end << std::endl;
+    for (; test_what < which_to_end; ++test_what) {
 
         AASS::maoris::EvaluationParam evalparam;
 
@@ -340,24 +354,28 @@ int main(int argc, char** argv) {
 
         //Threshold
         if (test_what == 1) {
+            std::cout << "THRESHOLD" << std::endl;
             t = 0;
             step = 0.05;
-            end = 1;
+            end = 0.05;
         }
         //Margin
         else if (test_what == 2) {
+            std::cout << "MARGIN" << std::endl;
             t = 0;
             step = 0.05;
             end = 1;
         }
         //Ripples
         else if (test_what == 3) {
-            t = 0;
+            std::cout << "RIPPLES" << std::endl;
+            t = 5;
             step = 5;
             end = 100;
         }
         //Doors
         else if (test_what == 4) {
+            std::cout << "DOORS" << std::endl;
             t = 0;
             step = 5;
             end = 105;
@@ -388,6 +406,7 @@ int main(int argc, char** argv) {
                     for (t; t < end; t = t + step) {
                         // 				for(m = 0; m <= 1 ; m = m + 0.05){
 
+                        std::cout << "STAT T " << t << std::endl;
                         AASS::maoris::Evaluation eval;
 
                         std::vector<boost::filesystem::path> v;
@@ -422,6 +441,9 @@ int main(int argc, char** argv) {
 
                     }
                 }
+                else{
+                    std::cout << "NOt dir " << std::endl;
+                }
             }
 
             //add precision mean and recal + nb of file
@@ -444,7 +466,8 @@ int main(int argc, char** argv) {
             evalparam.exportAll(result_file);
         }
         catch (const boost::filesystem::filesystem_error &ex) {
-            std::cout << ex.what() << '\n';
+            std::cout << "ERROR" << ex.what() << '\n';
+            exit(0);
         }
     }
 
