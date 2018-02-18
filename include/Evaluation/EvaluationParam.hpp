@@ -115,7 +115,7 @@ namespace AASS{
 
 
                     //Box plots
-                    std::cout << "\n\n" << std::endl;
+					myfile << "\n";
 
                     int count = 0;
                     for(auto eval : _evaluation) {

@@ -111,7 +111,8 @@ double AASS::maoris::GraphZone::contactPointWithWalls(AASS::maoris::GraphZoneInt
 		contact_point = contact_point + (*this)[v].contactPoint((*this)[targ]);
 		out_i++;
 	}
-	assert(contact_point <= 100);
+	//Not sure what this assert was for. Probably a long forgotten test.
+	//assert(contact_point <= 100);
 	return contact_point;
 
 }

@@ -231,9 +231,10 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 //     graph_slam.drawPartial(partial);
 	
 // 	cv::Mat img_hist_equalized;
-// 	cv::equalizeHist(graphmat, img_hist_equalized);
- // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
-// 	cv::imshow("GRAPH", img_hist_equalized);
+ 	cv::Mat img_hist_equalized;
+ 	cv::equalizeHist(graphmat, img_hist_equalized);
+ 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
+ 	cv::imshow("GRAPH", img_hist_equalized);
 // 	
 //     cv::Mat graphmat_vis = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.draw(graphmat_vis);
@@ -249,7 +250,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	
 	cv::Mat image_GT = cv::imread(full_path_GT,0);
 // 	cv::imshow("GT raw", image_GT);
-// 	cv::waitKey(0);
+ 	cv::waitKey(0);
 	
 	cv::Mat GT_segmentation = AASS::maoris::segment_Ground_Truth(image_GT);
     /// THIS ONE IS USE IF YOU NEED STRAIGHTEN MAPS
@@ -258,7 +259,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::Mat img_hist_equalizedgt;
 // 	cv::equalizeHist(GT_segmentation, img_hist_equalizedgt);
 // 	cv::imshow("GT", img_hist_equalizedgt);
-// 	cv::waitKey(0);
+ 	cv::waitKey(0);
 
 //    SKETCHES
 //    eval.compare(graphmat, GT_segmentation, time, file);
