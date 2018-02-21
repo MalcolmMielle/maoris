@@ -115,14 +115,14 @@ namespace AASS{
 
 
                     //Box plots
-					myfile << "\n";
+					myfile << "\n\n";
 
-                    int count = 0;
+                    double count = start;
                     for(auto eval : _evaluation) {
                         for (auto mcc : eval.getAllMatthewsCC()) {
                             myfile << count << " " << mcc << "\n";
 						}
-                        count++;
+                        count = count + step;
                     }
 
 					
