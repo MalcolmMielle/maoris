@@ -39,8 +39,8 @@ void AASS::maoris::Evaluation::compare(const cv::Mat& seg, const cv::Mat& GT_seg
 	
 	/******** THIS************/
 	
-	AASS::maoris::results Regions;
-	AASS::maoris::compare_images(GT_segmentation, seg, Regions);
+//	AASS::maoris::results Regions;
+//	AASS::maoris::compare_images(GT_segmentation, seg, Regions);
 // 	addPrecision(Regions.precision);
 // 	addRecall(Regions.recall);
 // 	addInverseRecall(Regions.inverse_recall);
@@ -60,7 +60,7 @@ void AASS::maoris::Evaluation::compare(const cv::Mat& seg, const cv::Mat& GT_seg
 // 				extract_results(Regions, Precisions, Recalls, inverse_recall);
 	
 	
-	std::cout << " OldFurniture Precision: " <<Regions.precision << " Recall: "<< Regions.recall << " Inverse recall " << Regions.inverse_recall << std::endl;
+//	std::cout << " OldFurniture Precision: " <<Regions.precision << " Recall: "<< Regions.recall << " Inverse recall " << Regions.inverse_recall << std::endl;
 	
 	std::cout << " No_Furniture Precision: " << _precision[_precision.size() - 1] << " Recall: "<< _recall[_precision.size() - 1] << " Inverse recall " << _inverse_recall[_precision.size() - 1] << " time: "<< _time[_precision.size() - 1] <<" Labels " << max <<"  size " << proper_size << std::endl;
 	
@@ -125,7 +125,7 @@ void AASS::maoris::Evaluation::calculate()
 {
 	_mean_p = mean<double>(_precision);
 	
-	assert(std::isnan(_mean_p) == false);
+	assert(!std::isnan(_mean_p));
 	_mean_r = mean<double>(_recall);
 	_mean_ir = mean<double>(_inverse_recall);
 	
@@ -149,7 +149,19 @@ void AASS::maoris::Evaluation::calculate()
 	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
 	_dor = mean<double>(_dor_individual);
 	_accuracy = mean<double>(_accuracy_individual);
-	
+
+	auto minmax = std::minmax_element(_matthewCC_individual.begin(), _matthewCC_individual.end());
+	_max_mcc = *(minmax.second);
+	_min_mcc = *(minmax.first);
+
+    assert(_max_mcc >= 0);
+    assert(_max_mcc <= 1);
+    assert(_min_mcc >= 0);
+    assert(_min_mcc <= 1);
+
+
+//	_min_mcc = std::min_element(_matthewCC_individual);
+
 }
 
 
@@ -205,12 +217,16 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	
 	AllZoneAsso allAsso;
 	allAsso.FromTag(DuDe_tag2mapper);
+//    std::cout << "There is " << allAsso.size() << " asso " << std::endl;
 
-	allAsso.sort();
-	allAsso.calculateAsso();
+
+    allAsso.sort();
+//    std::cout << "There is " << allAsso.size() << " asso " << std::endl;
+
+    allAsso.calculateAsso();
 	
-// 	std::cout << "There is " << allAsso.size() << " asso " << std::endl;
-// 	assert(allAsso.size() != 0);
+ 	std::cout << "There is " << allAsso.size() << " asso " << std::endl;
+ 	assert(allAsso.size() != 0);
 	
 	
 	std::vector<double> tp;
@@ -223,14 +239,14 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 // 	double fp = 0 ;
 // 	double fn = 0 ;
 	
-	for (auto it = allAsso.associations.begin() ; it != allAsso.associations.end() ; ++it){
+	for (auto &association : allAsso.associations) {
 // 		std::cout << "FIRST ZONE" << std::endl;
-		int seg = it->first;
-		int gt = it->second;
+		int seg = association.first;
+		int gt = association.second;
 		
-		int max_intersection = DuDe_tag2mapper[seg][gt].size();
-		int total_points = dude_points[seg].size();
-		int total_gt_point = gt_points[gt].size();
+		unsigned long max_intersection = DuDe_tag2mapper[seg][gt].size();
+        unsigned long total_points = dude_points[seg].size();
+		unsigned long total_gt_point = gt_points[gt].size();
 		double tp_t = max_intersection;
 		double fp_t = total_points - max_intersection;
 		double tn_t = nb_of_pixels - (fp_t - total_gt_point);
@@ -241,19 +257,19 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		tn.push_back(tn_t);
 		fn.push_back(fn_t);
 		
-// 		std::cout << "tp fp tn fn " << tp_t << " " << fp_t << " " << tn_t << " " << fn_t << std::endl;
+ 		std::cout << "tp fp tn fn " << tp_t << " " << fp_t << " " << tn_t << " " << fn_t << std::endl;
 		
-		assert(std::isnan(tp_t + fp_t) == false);
-		assert(std::isnan(tp_t + fn_t) == false);
-		assert(std::isnan(fp_t + tn_t) == false);
+		assert(!std::isnan(tp_t + fp_t));
+		assert(!std::isnan(tp_t + fn_t));
+		assert(!std::isnan(fp_t + tn_t));
 		
 		precisions.push_back(tp_t / (tp_t + fp_t));
 		recalls.push_back(tp_t / (tp_t + fn_t));
 		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
 		
-		assert(std::isnan(tp_t / (tp_t + fp_t)) == false);
-		assert(std::isnan(tp_t / (tp_t + fn_t)) == false);
-		assert(std::isnan(fp_t / (fp_t + tn_t)) == false);
+		assert(!std::isnan(tp_t / (tp_t + fp_t)));
+		assert(!std::isnan(tp_t / (tp_t + fn_t)));
+		assert(!std::isnan(fp_t / (fp_t + tn_t)));
 		
 		
 // 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
@@ -355,7 +371,8 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	_fp.push_back(mean<double>(fp));
 	_tn.push_back(mean<double>(tn));
 	_fn.push_back(mean<double>(fn));
-	
+
+    std::cout << "Mean precision " << mean<double>(precisions) << std::endl;
 	assert(std::isnan(mean<double>(precisions)) == false);
 	
 	
@@ -480,8 +497,8 @@ void AASS::maoris::compare_images(cv::Mat GT_segmentation_in, cv::Mat DuDe_segme
 	cum_total=0;
 			std::cout << "Regions in DuDe: "<< std::endl;
 			
-	double fp;
-	double tp_temp;
+	double fp = 0;
+	double tp_temp = 0;
 			
 	for( tag2tagMapper::iterator it = DuDe_tag2mapper.begin(); it!= DuDe_tag2mapper.end(); it++ ){
 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
@@ -662,7 +679,7 @@ cv::Mat AASS::maoris::segment_Ground_Truth(cv::Mat GroundTruth_BW)
 
 bool AASS::maoris::checkAllValue(const cv::Mat& mat_in, const std::vector< int >& all_vals)
 {
-	std::cout << mat_in.size().width << " " << mat_in.size().height << std::endl;
+//	std::cout << mat_in.size().width << " " << mat_in.size().height << std::endl;
 	
 	for(int x=0; x < mat_in.size().width; x++){
 		for(int y=0; y < mat_in.size().height; y++){

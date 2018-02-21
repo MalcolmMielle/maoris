@@ -170,33 +170,13 @@ void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, c
 
 
 
-void process(const std::string& file, const std::string& full_path_GT, AASS::maoris::Evaluation& eval, double t, int test_what){
+void process(const std::string& file, double t, double margin, double ripples, double doors){
 
 	AASS::maoris::GraphZone graph_slam;
-	if(test_what == 1){
-		graph_slam.setThreshold(t);
-		graph_slam.setMargin(0.1);
-		graph_slam.setThresholdFusionRipples(40);
-		graph_slam.setThresholdFusionDoors(40);
-	}
-	if(test_what == 2){
-		graph_slam.setThreshold(0.30);
-		graph_slam.setMargin(t);
-		graph_slam.setThresholdFusionRipples(40);
-		graph_slam.setThresholdFusionDoors(40);
-	}
-	if(test_what == 3){
-		graph_slam.setThreshold(0.30);
-		graph_slam.setMargin(0.1);
-		graph_slam.setThresholdFusionRipples(t);
-		graph_slam.setThresholdFusionDoors(40);
-	}
-	if(test_what == 4){
-		graph_slam.setThreshold(0.30);
-		graph_slam.setMargin(0.1);
-		graph_slam.setThresholdFusionRipples(40);
-		graph_slam.setThresholdFusionDoors(t);
-	}
+	graph_slam.setThreshold(t);
+	graph_slam.setMargin(margin);
+	graph_slam.setThresholdFusionRipples(ripples);
+	graph_slam.setThresholdFusionDoors(doors);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
@@ -231,10 +211,9 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 //     graph_slam.drawPartial(partial);
 	
 // 	cv::Mat img_hist_equalized;
- 	//cv::Mat img_hist_equalized;
- 	//cv::equalizeHist(graphmat, img_hist_equalized);
- 	//cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
- 	//cv::imshow("GRAPH", img_hist_equalized);
+// 	cv::equalizeHist(graphmat, img_hist_equalized);
+ // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
+// 	cv::imshow("GRAPH", img_hist_equalized);
 // 	
 //     cv::Mat graphmat_vis = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.draw(graphmat_vis);
@@ -250,7 +229,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	
 	cv::Mat image_GT = cv::imread(full_path_GT,0);
 // 	cv::imshow("GT raw", image_GT);
- 	//cv::waitKey(0);
+// 	cv::waitKey(0);
 	
 	cv::Mat GT_segmentation = AASS::maoris::segment_Ground_Truth(image_GT);
     /// THIS ONE IS USE IF YOU NEED STRAIGHTEN MAPS
@@ -259,12 +238,12 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::Mat img_hist_equalizedgt;
 // 	cv::equalizeHist(GT_segmentation, img_hist_equalizedgt);
 // 	cv::imshow("GT", img_hist_equalizedgt);
- 	//cv::waitKey(0);
+// 	cv::waitKey(0);
 
 //    SKETCHES
 //    eval.compare(graphmat, GT_segmentation, time, file);
 //    ROBOT MAPS
-    eval.compare(graphmat, GT_segmentation, time, file);
+    eval.compare(graphmat_straight, GT_segmentation, time, file);
 	std::cout << "SIZE " << eval.size() << std::endl;
 }
 
@@ -323,160 +302,65 @@ int main(int argc, char** argv) {
 // 	int argc = boost::unit_test::framework::master_test_suite().argc;
 // 	char** argv = boost::unit_test::framework::master_test_suite().argv;
 
-
-    std::vector<std::string> gts;
-    std::string maps;
-    std::tie(maps, gts) = getMapsAndGT();
-
-    int test_what = -1;
-    if(argc >= 2) {
-        test_what = atoi(argv[1]);
+    cv::VideoCapture cap;
+    //Choose param
+    double threshold = 0;
+    double margin = 0;
+    double ripples = 0;
+    double doors = 0;
+    
+    std::cout << "Threshold : " << std::endl;
+    std::cin >> threshold;
+    std::cout << "Margin : " << std::endl;
+    std::cin >> margin;
+    std::cout << "Ripples : " << std::endl;
+    std::cin >> ripples;
+    std::cout << "Doors : " << std::endl;
+    std::cin >> doors;
+    
+    if(!cap.open(0)){
+        return 0;
     }
-//	std::string path_gt = argv[2];
-// 	std::string file = "../../Test/Thermal/cold.jpg";
+    std::cout << "Welcome to the maoris test program.\n\n**** Press 1 to run maoris on the webcam image.\n**** Press 2 to change the parameters\nInput: " << std::endl;
+    
+    bool run = true;
+    double input = 0;
+    while(run){
+                 
 
-    int which_to_end = 5;
-    if(test_what != -1){
-        assert(test_what <= 4);
-        assert(test_what >= 1);
-        which_to_end = test_what + 1;
-    }else{
-        test_what = 1;
+        cv::Mat frame;
+        cap >> frame;
+        if(frame.empty() ) break;
+        
+        //PROCESS FRAME TODO
+        
+        cv::imshow("smile", frame);
+        if(waitKey(10) == 27) run = false; //Press esc to quit
+        if(waitKey(10) == 27) process(fn.string(), threshold, margin, ripples, doors);
+        if(waitKey(10) == 27){
+            std::cout << "Threshold : " << std::endl;
+            std::cin >> threshold;
+            std::cout << "Margin : " << std::endl;
+            std::cin >> margin;
+            std::cout << "Ripples : " << std::endl;
+            std::cin >> ripples;
+            std::cout << "Doors : " << std::endl;
+            std::cin >> doors;
+        }
+        
+    
     }
 
-    std::cout << test_what << " " << which_to_end << std::endl;
-    for (; test_what < which_to_end; ++test_what) {
+    //Read image
+    
+    cap.close()
+    
+    
+    // Send process
+    
+    
 
-        AASS::maoris::EvaluationParam evalparam;
-
-        double start = 0;
-        double t = 0;
-        double step = 0;
-        double end = 0;
-
-	    //END IS INCLUDED IN THE LOOP
-        //Threshold
-        if (test_what == 1) {
-            std::cout << "THRESHOLD" << std::endl;
-            t = 0;
-            start = t;
-            step = 0.05;
-            end = 1;
-        }
-        //Margin
-        else if (test_what == 2) {
-            std::cout << "MARGIN" << std::endl;
-            t = 0;
-            start = t;
-            step = 0.05;
-            end = 1;
-        }
-        //Ripples
-        else if (test_what == 3) {
-            std::cout << "RIPPLES" << std::endl;
-            t = 5;
-            start = t;
-            step = 5;
-            end = 100;
-        }
-        //Doors
-        else if (test_what == 4) {
-            std::cout << "DOORS" << std::endl;
-            t = 0;
-            start = t;
-            step = 5;
-            end = 100;
-        } else {
-            throw std::runtime_error("TOO FAR");
-        }
-
-
-        try {
-
-            for (auto gt : gts) {
-
-                boost::filesystem::path p(maps);
-                boost::filesystem::path p_gt(gt);
-
-
-                if (!boost::filesystem::exists(p) || !boost::filesystem::exists(p_gt)) {
-                    std::cout << "need a valid path toward the images" << std::endl;
-                    return 0;
-                }
-                if (!boost::filesystem::is_directory(p) || !boost::filesystem::is_directory(p_gt)) {
-                    std::cout << "need a valid path folder toward the images" << std::endl;
-                    return 0;
-                }
-
-                if (boost::filesystem::is_directory(p)) {
-
-                    for (t; t <= end; t = t + step) {
-                        // 				for(m = 0; m <= 1 ; m = m + 0.05){
-
-                        std::cout << "STAT T " << t << std::endl;
-                        AASS::maoris::Evaluation eval;
-
-                        std::vector<boost::filesystem::path> v;
-                        //Get all files and sort them
-                        std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(),
-                                  std::back_inserter(v));
-                        std::sort(v.begin(), v.end());
-
-
-
-                        // 			int i = 0;
-                        for (std::vector<boost::filesystem::path>::const_iterator it(v.begin());
-                             it != v.end(); it = ++it) {
-                            boost::filesystem::path fn = *it;
-
-                            std::string name = fn.filename().string();
-                            std::string model = gt + name;
-
-                            std::cout << "Process " << fn.string() << " with model " << model << std::endl;
-
-                            process(fn.string(), model, eval, t, test_what);
-
-                            std::cout << "SIZE " << eval.size() << std::endl;
-                            // 				if(i == 3){
-                            // 					return 0;
-                            // 				}
-                            // 				++i;
-                        }
-
-                        eval.calculate();
-                        evalparam.add(eval, t);
-
-                    }
-                }
-                else{
-                    std::cout << "NOt dir " << std::endl;
-                }
-            }
-
-            //add precision mean and recal + nb of file
-            std::string result_file;
-
-            if (test_what == 1) {
-                result_file = "maoris_param_threshold_sketch.dat";
-            }
-            if (test_what == 2) {
-                result_file = "maoris_param_margin_sketch.dat";
-            }
-            if (test_what == 3) {
-                result_file = "maoris_param_ripples_sketch.dat";
-            }
-            if (test_what == 4) {
-                result_file = "maoris_param_doors_sketch.dat";
-            }
-
-            std::cout << "SIZE " << evalparam.size() << std::endl;
-            evalparam.exportAll(result_file, start, step);
-        }
-        catch (const boost::filesystem::filesystem_error &ex) {
-            std::cout << "ERROR" << ex.what() << '\n';
-            exit(0);
-        }
-    }
+    
 
     //add precision mean and recal + nb of file
     // 	std::string result_file = "maoris_param_doors.dat";

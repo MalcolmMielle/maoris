@@ -17,11 +17,18 @@ namespace AASS{
 		protected:
 			std::vector< std::vector< cv::Point> > _contours;
 			std::vector<std::pair<cv::Point, cv::Point> > _limits;
+			///@brief Segmented map with straighten lines
 			cv::Mat _segmented;
 			
 		public:
 			Segmentor(){}
-			
+
+            /**
+             *
+             * @param src voila
+             * @param graph_src
+             * @return
+             */
 			double segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src);			
 			
 			cv::Mat& getSegmentedMap(){return _segmented;}

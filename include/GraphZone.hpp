@@ -113,9 +113,10 @@ namespace AASS{
 			/** @brief Remove all vertex which zone is less than size in size.
 			 * @param size size under which the vertex gets removed
 			 * @param preserveEdgeConnectic if true the connection between edge is "preserved" i.e if we have Node1 - Node2 - Node3 and we remove Node2 the end result will be Node1 - Node3. Plus the zone of the removed vertex will be fused into the biggest neighbor
+			 * @param[in] flag_to_test_if_used if true this function will print a message and halt if used to remove a vertex. Here for testing purpose.
 			 * TODO : change name to Vertices
 			 */			
-			void removeVertexUnderSize(int size, bool preserveEdgeConnectic);
+			void removeVertexUnderSize(int size, bool preserveEdgeConnectic, bool flag_to_test_if_used = false);
 			
 			bool asVerticesWithNoEdges();
 			

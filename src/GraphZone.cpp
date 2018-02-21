@@ -3,7 +3,7 @@
 
 
 
-void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeConnectic){
+void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeConnectic, bool flag_to_test_if_used){
 	std::pair<VertexIteratorZone, VertexIteratorZone> vp;
 	//vertices access all the vertix
 	for (vp = boost::vertices((*this)); vp.first != vp.second;) {
@@ -11,7 +11,12 @@ void AASS::maoris::GraphZone::removeVertexUnderSize(int size, bool preserveEdgeC
 		++vp.first;
 // 		std::cout << "Remove under size. Size " << (*this)[v].size() << std::endl;
 		if((*this)[v].size() < size){
-			
+
+			if(flag_to_test_if_used) {
+				std::cout << "WHAT THE FUCK WHY REMOVE :( ?" << std::endl;
+				exit(0);
+			}
+
 			if(preserveEdgeConnectic == true){
 				if(getNumEdges(v) > 0){
 					
@@ -106,7 +111,8 @@ double AASS::maoris::GraphZone::contactPointWithWalls(AASS::maoris::GraphZoneInt
 		contact_point = contact_point + (*this)[v].contactPoint((*this)[targ]);
 		out_i++;
 	}
-	assert(contact_point <= 100);
+	//Not sure what this assert was for. Probably a long forgotten test.
+	//assert(contact_point <= 100);
 	return contact_point;
 
 }
@@ -324,7 +330,7 @@ void AASS::maoris::GraphZone::getAllNodeRemovedWatershed(AASS::maoris::GraphZone
 			VertexZone targ = boost::target(e_second, (*this));
 		
 			//Needed to not consider the new added vertex since they are supposed to be stopping point of the recursion.
-			//This is a marker for node that are here seen the begining
+			//This is a marker for node that are here seen the begining. TODO USELESS
 			bool is_old = false;
 			for(size_t i = 0; i < listedge.size() ; ++i){
 				if(listedge[i] == e_second)
@@ -390,7 +396,8 @@ void AASS::maoris::GraphZone::getAllNodeRemovedWatershed(AASS::maoris::GraphZone
 						
 					try{
 						// removeVertexWhilePreservingEdges(targ, first_vertex);
-						to_be_removed.push_back(targ);
+						to_be_removed.push_back(targ); 
+                        //TODO save a recursion by doing ++out here !
 					}
 					catch(std::exception& e){
 						std::cout << "Zone had more than one shape. It's fine at this point in the proccess. Continue" << std::endl;
@@ -537,7 +544,7 @@ void AASS::maoris::GraphZone::watershed(double threshold)
 
 }
 
-
+///@Brief fuse two vertex into one.
 void AASS::maoris::GraphZone::removeVertexWhilePreservingEdges(AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v, AASS::maoris::GraphZoneInterface<Zone, EdgeElement>::VertexZone& v_to_fuse_in, bool createUnBreakableLinks)
 {
 	assert(v != v_to_fuse_in);
