@@ -267,59 +267,63 @@ int main(int argc, char** argv){
 	AASS::maoris::Evaluation eval;
 	
 	std::string path_file = argv[1];
-	std::string path_gt = argv[2];
+	std::vector<std::string> path_gt;
+	std::string path_gt1 = argv[2];
+	std::string path_gt2 = argv[3];
+	path_gt.push_back(path_gt1);
+	path_gt.push_back(path_gt2);
 	
-	bool write = argv[3];
+	bool write = argv[4];
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 	
-	boost::filesystem::path p(path_file);
-	boost::filesystem::path p_gt(path_gt);
-	try{
-		if(! boost::filesystem::exists(p) || ! boost::filesystem::exists(p_gt) ){
-			std::cout << "need a valid path toward the images" << std::endl;
-			return 0;
-		}
-		if(! boost::filesystem::is_directory(p) || ! boost::filesystem::is_directory(p_gt) ){
-			std::cout << "need a valid path folder toward the images" << std::endl;
-			return 0;
-		}
-		
-		if(boost::filesystem::is_directory(p)){
-			
-			
-			
-			std::vector<boost::filesystem::path> v;
-			//Get all files and sort them
-			std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
-			std::sort(v.begin(), v.end());
-			
-			
-			
-// 			int i = 0;
-			for (std::vector<boost::filesystem::path>::const_iterator it (v.begin()); it != v.end(); it = ++it)
-			{
-				boost::filesystem::path fn = *it;
-				
-				std::string name = fn.filename().string();
-				std::string model = path_gt + name;
-				
-				std::cout << "Process " << fn.string() << " with model " << model << std::endl;
-				
-				process(fn.string(), model, eval, write);
-// 				eval.calculate();
-				
-				std::cout << "SIZE " << eval.size() << std::endl;
-// 				if(i == 3){
-// 					return 0;
-// 				}
-// 				++i;
-			}
-		}
-	}
-	catch (const boost::filesystem::filesystem_error& ex)
-	{
-		std::cout << ex.what() << '\n';
-	}
+	for(int i = 0 ; i < 2 ; ++i){
+	    boost::filesystem::path p(path_file);
+	    boost::filesystem::path p_gt(path_gt[i]);
+	    try{
+		    if(! boost::filesystem::exists(p) || ! boost::filesystem::exists(p_gt) ){
+			    std::cout << "need a valid path toward the images" << std::endl;
+			    return 0;
+		    }
+		    if(! boost::filesystem::is_directory(p) || ! boost::filesystem::is_directory(p_gt) ){
+			    std::cout << "need a valid path folder toward the images" << std::endl;
+			    return 0;
+		    }
+		    
+		    if(boost::filesystem::is_directory(p)){
+			    
+			    
+			    
+			    std::vector<boost::filesystem::path> v;
+			    //Get all files and sort them
+			    std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
+			    std::sort(v.begin(), v.end());
+			    
+    // 			int i = 0;
+			    for (std::vector<boost::filesystem::path>::const_iterator it (v.begin()); it != v.end(); it = ++it)
+			    {
+				    boost::filesystem::path fn = *it;
+				    
+				    std::string name = fn.filename().string();
+				    std::string model = path_gt[i] + name;
+				    
+				    std::cout << "Process " << fn.string() << " with model " << model << std::endl;
+				    
+				    process(fn.string(), model, eval, write);
+    // 				eval.calculate();
+				    
+				    std::cout << "SIZE " << eval.size() << std::endl;
+    // 				if(i == 3){
+    // 					return 0;
+    // 				}
+    // 				++i;
+			    }
+		    }
+	    }
+	    catch (const boost::filesystem::filesystem_error& ex)
+	    {
+		    std::cout << ex.what() << '\n';
+	    }
+    }
 	
 	//add precision mean and recal + nb of file
 	std::string result_file = "maoris_all_measures.dat";
