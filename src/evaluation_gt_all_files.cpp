@@ -172,10 +172,10 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 	AASS::maoris::GraphZone graph_slam;
 	
-	graph_slam.setThreshold(0.3);
+	graph_slam.setThreshold(0.5);
 	graph_slam.setMargin(0.1);
 	graph_slam.setThresholdFusionRipples(40);
-	graph_slam.setThresholdFusionDoors(40);
+	graph_slam.setThresholdFusionDoors(50);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
@@ -269,14 +269,14 @@ int main(int argc, char** argv){
 	std::string path_file = argv[1];
 	std::vector<std::string> path_gt;
 	std::string path_gt1 = argv[2];
-	std::string path_gt2 = argv[3];
+//	std::string path_gt2 = argv[3];
 	path_gt.push_back(path_gt1);
-	path_gt.push_back(path_gt2);
+//	path_gt.push_back(path_gt2);
 	
 	bool write = argv[4];
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 	
-	for(int i = 0 ; i < 2 ; ++i){
+	for(int i = 0 ; i < 1 ; ++i){
 	    boost::filesystem::path p(path_file);
 	    boost::filesystem::path p_gt(path_gt[i]);
 	    try{
