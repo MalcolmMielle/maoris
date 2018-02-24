@@ -172,10 +172,10 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 	AASS::maoris::GraphZone graph_slam;
 	
-	graph_slam.setThreshold(0.5);
+	graph_slam.setThreshold(0.30);
 	graph_slam.setMargin(0.1);
 	graph_slam.setThresholdFusionRipples(40);
-	graph_slam.setThresholdFusionDoors(50);
+	graph_slam.setThresholdFusionDoors(40);
 	
 	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
