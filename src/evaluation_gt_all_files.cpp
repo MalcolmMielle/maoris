@@ -171,7 +171,7 @@ void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, c
 void process(const std::string& file, const std::string& full_path_GT, AASS::maoris::Evaluation& eval, bool write = false){
 
 	AASS::maoris::GraphZone graph_slam;
-	
+
 	graph_slam.setThreshold(0.30);
 	graph_slam.setMargin(0.1);
 	graph_slam.setThresholdFusionRipples(40);
@@ -253,7 +253,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	cv::imshow("GT", img_hist_equalizedgt);
 // 	cv::waitKey(0);
 	
-	eval.compare(graphmat_straight, GT_segmentation, time, file);
+	eval.compare(graphmat, GT_segmentation, time, file);
 	std::cout << "SIZE " << eval.size() << std::endl;
 }
 
@@ -269,14 +269,14 @@ int main(int argc, char** argv){
 	std::string path_file = argv[1];
 	std::vector<std::string> path_gt;
 	std::string path_gt1 = argv[2];
-//	std::string path_gt2 = argv[3];
+	std::string path_gt2 = argv[3];
 	path_gt.push_back(path_gt1);
-//	path_gt.push_back(path_gt2);
+	path_gt.push_back(path_gt2);
 	
-	bool write = argv[4];
+	bool write = static_cast<bool>(argv[4]);
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 	
-	for(int i = 0 ; i < 1 ; ++i){
+	for(int i = 0 ; i < 2 ; ++i){
 	    boost::filesystem::path p(path_file);
 	    boost::filesystem::path p_gt(path_gt[i]);
 	    try{

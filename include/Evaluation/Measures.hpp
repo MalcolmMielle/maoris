@@ -38,7 +38,8 @@ namespace AASS{
 
 			std::cout << "( (" << tp<< " * "<< tn<< ") - (" << fp << " * " << fn << ") ) / ( std::sqrt( (" << tp << " + " << fp << ") * (" << tp << " + " << fn << ") * (" << tn << " + " << fp << ") * (" << tn << " + " << fn << ") ) ) " << std::endl;
 			auto mcc = ( (tp * tn) - (fp * fn) ) / ( std::sqrt( (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn) ) );
-			assert(mcc >= 0 && mcc <= 1);
+			std::cout << "mcc " << mcc << std::endl;
+			assert(mcc >= -1 && mcc <= 1);
 			return mcc;
 		}
 		

@@ -101,6 +101,10 @@ namespace AASS{
 		//Keep all association of Segmented and GT
 		class AllZoneAsso{
 		public:
+
+			std::vector<int> non_asso_gt;
+			std::vector<int> non_asso_seg;
+
 			std::vector<ZoneAsso> zones;
 			
 			std::vector <std::pair<int, int> > associations;
@@ -129,10 +133,19 @@ namespace AASS{
 				
 		
 			}
-			
+
 			bool isAsso(int i){
 				for(auto it = associations.begin() ; it != associations.end() ; ++it){
 					if(i == it->second){
+						return true;
+					}
+				}
+				return false;
+			}
+
+			bool isAssoSeg(int i){
+				for(auto it = associations.begin() ; it != associations.end() ; ++it){
+					if(i == it->first){
 						return true;
 					}
 				}
@@ -148,8 +161,9 @@ namespace AASS{
 					int segmented = it->pixel_value;
 					int pos = 0;
 					int gt = -1;
-					
-					while(pos < it->other_zones.size() && (isAsso(gt) == true || gt == -1 ) ){
+
+					//Explore until we find a non associated gt.
+					while(pos < it->other_zones.size() && (isAsso(gt) || gt == -1 ) ){
 						gt = it->other_zones[pos].pixel_value;
 						++pos;
 					}
@@ -157,9 +171,36 @@ namespace AASS{
 					if(gt != -1){
 						associations.push_back(std::pair<int, int>(segmented, gt));
 					}
+					//TODO HANDLE NON ASSOCIATION
+					// of both
 					
 				}
+
+				//Non associated gt with empty
+				for( auto it = zones.begin() ; it != zones.end() ; ++it ){
+					int segmented = it->pixel_value;
+
+					if(!isAssoSeg(segmented)) {
+						non_asso_seg.push_back(segmented);
+					}
+
+					int pos = 0;
+					int gt = -1;
+
+					//Explore until we find a non associated gt.
+					for(int pos = 0; pos < it->other_zones.size(); ++pos) {
+						gt = it->other_zones[pos].pixel_value;
+						if (!isAsso(gt)) {
+							non_asso_gt.push_back(gt);
+						}
+					}
+					//TODO HANDLE NON ASSOCIATION
+					// of both
+				}
 			}
+
+
+
 			
 			void print(){
 				for( auto it = zones.begin() ; it != zones.end() ; ++it ){	
@@ -240,6 +281,7 @@ namespace AASS{
 			std::vector<double> _g_score_individual;
 			std::vector<double> _accuracy_individual;
 			std::vector<double> _matthewCC_individual;
+			std::vector<double> _matthewCC_perzone_individual;
 			//Diagnostic odds ratio
 			std::vector<double> _dor_individual;
 			
@@ -255,6 +297,8 @@ namespace AASS{
 			double _accuracy;
 			double _matthewCC;
 			double _matthewCC_median;
+			double _matthewCC_perzone;
+			double _matthewCC_median_perzone;
 			double _sd_mCC;
 			double _dor;
 			

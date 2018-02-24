@@ -201,7 +201,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	std::vector < std::vector<float> > Precisions, Recalls;
 	std::vector<double> Times;
 		
-	eval.compare(GT_segmentation, graphmat, 0, file);
+	eval.compare(graphmat, GT_segmentation, 0, file);
 }
 
 

@@ -76,7 +76,7 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	std::ofstream myfile;
 	if(!exists_test3(result_file)){
 		myfile.open (result_file);
-		myfile << "# precision recall inverse_recall time labels size fscore gscore dorscore matthewsCC accuracy tp tn fp fn\n";
+		myfile << "# precision recall inverse_recall time labels size fscore gscore dorscore matthewsCC accuracy mcc_perzone tp tn fp fn\n";
 	}
 	else{
 		myfile.open (result_file, std::ios::out | std::ios::app);
@@ -86,12 +86,12 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	{
 		for(int i = 0 ; i < _precision.size() ; ++i){
 			
-			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _matthewCC_individual[i] << " " << _accuracy_individual[i] <<  " " << _tp[i] << " " << _tn[i] << " " << _fp[i] << " " << _fn[i] << "\n";
+			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _matthewCC_individual[i] << " " << _accuracy_individual[i] <<  " " << _matthewCC_perzone_individual[i] << " " << _tp[i] << " " << _tn[i] << " " << _fp[i] << " " << _fn[i] << "\n";
 			
 		}
 		
-		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC matthiew_median accuracy\n";
-		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _matthewCC_median << " " << _accuracy << "\n";
+		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC matthiew_median accuracy mcc_perzonemean mcc_perzone_median\n";
+		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _matthewCC_median << " " << _accuracy << " " << _matthewCC_perzone << " " << _matthewCC_median_perzone << "\n";
 		myfile.close();
 		
 		
@@ -146,6 +146,10 @@ void AASS::maoris::Evaluation::calculate()
 	_gscore = gscore<double>(_mean_p, _mean_r);
 	_matthewCC = mean<double>(_matthewCC_individual);
 	_matthewCC_median = median<double>(_matthewCC_individual);
+
+	_matthewCC_perzone = mean<double>(_matthewCC_perzone_individual);
+	_matthewCC_median_perzone = median<double>(_matthewCC_perzone_individual);
+
 	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
 	_dor = mean<double>(_dor_individual);
 	_accuracy = mean<double>(_accuracy_individual);
@@ -154,9 +158,9 @@ void AASS::maoris::Evaluation::calculate()
 	_max_mcc = *(minmax.second);
 	_min_mcc = *(minmax.first);
 
-    assert(_max_mcc >= 0);
+    assert(_max_mcc >= -1);
     assert(_max_mcc <= 1);
-    assert(_min_mcc >= 0);
+    assert(_min_mcc >= -1);
     assert(_min_mcc <= 1);
 
 
@@ -233,6 +237,7 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	std::vector<double> tn;
 	std::vector<double> fp;
 	std::vector<double> fn;
+	std::vector<double> mccs;
 
 // 	double tp = 0 ;
 // 	double tn = 0 ;
@@ -270,6 +275,8 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		assert(!std::isnan(tp_t / (tp_t + fp_t)));
 		assert(!std::isnan(tp_t / (tp_t + fn_t)));
 		assert(!std::isnan(fp_t / (fp_t + tn_t)));
+
+		mccs.push_back(matthewCC<double>(tp_t, fp_t, tn_t, fn_t));
 		
 		
 // 		cv::Mat DuDe_segmentation_draw = cv::Mat::zeros(GT_segmentation.size(),CV_8UC1);
@@ -289,7 +296,70 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 		
 		
 	}
-	
+
+
+	std::cout << "NON ASSO GT" << std::endl;
+	for(auto gt : allAsso.non_asso_gt) {
+
+		unsigned long max_intersection = 0;
+		unsigned long total_points = 0;
+		unsigned long total_gt_point = gt_points[gt].size();
+		double tp_t = max_intersection;
+		double fp_t = total_points - max_intersection;
+		double tn_t = nb_of_pixels - (fp_t - total_gt_point);
+		double fn_t = total_gt_point - tp_t;
+
+		tp.push_back(tp_t);
+		fp.push_back(fp_t);
+		tn.push_back(tn_t);
+		fn.push_back(fn_t);
+
+		std::cout << "tp fp tn fn " << tp_t << " " << fp_t << " " << tn_t << " " << fn_t << std::endl;
+
+		assert(!std::isnan(tp_t + fp_t));
+		assert(!std::isnan(tp_t + fn_t));
+		assert(!std::isnan(fp_t + tn_t));
+
+		precisions.push_back(0);
+		recalls.push_back(tp_t / (tp_t + fn_t));
+		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
+
+		assert(!std::isnan(tp_t / (tp_t + fn_t)));
+		assert(!std::isnan(fp_t / (fp_t + tn_t)));
+		std::cout << "Hu" << std::endl;
+		mccs.push_back(0);
+	}
+	std::cout << "NON ASSO SEG" << std::endl;
+	for(auto seg : allAsso.non_asso_seg) {
+		unsigned long max_intersection = 0;
+		unsigned long total_points = dude_points[seg].size();
+		unsigned long total_gt_point = 0;
+		double tp_t = max_intersection;
+		double fp_t = total_points - max_intersection;
+		double tn_t = nb_of_pixels - (fp_t - total_gt_point);
+		double fn_t = total_gt_point - tp_t;
+
+		tp.push_back(tp_t);
+		fp.push_back(fp_t);
+		tn.push_back(tn_t);
+		fn.push_back(fn_t);
+
+		std::cout << "tp fp tn fn " << tp_t << " " << fp_t << " " << tn_t << " " << fn_t << std::endl;
+
+		assert(!std::isnan(tp_t + fp_t));
+		assert(!std::isnan(tp_t + fn_t));
+		assert(!std::isnan(fp_t + tn_t));
+
+		precisions.push_back(tp_t / (tp_t + fp_t));
+		recalls.push_back(0);
+		inverse_recalls.push_back(fp_t / (fp_t + tn_t));
+
+		assert(!std::isnan(tp_t / (tp_t + fp_t)));
+		assert(!std::isnan(fp_t / (fp_t + tn_t)));
+		std::cout << "Hu" << std::endl;
+		mccs.push_back(0);
+	}
+	std::cout << "DONE" << std::endl;
 	
 	
 	
@@ -367,10 +437,27 @@ void AASS::maoris::Evaluation::compareImagesUnbiased(cv::Mat GT_segmentation_in,
 	_precision.push_back(mean<double>(precisions));
 	_recall.push_back(mean<double>(recalls));
 	_inverse_recall.push_back(mean<double>(inverse_recalls));
-	_tp.push_back(mean<double>(tp));
-	_fp.push_back(mean<double>(fp));
-	_tn.push_back(mean<double>(tn));
-	_fn.push_back(mean<double>(fn));
+	double sum_of_elems = 0;
+	for (auto& n : tp)
+		sum_of_elems += n;
+	_tp.push_back(sum_of_elems);
+	double sum_of_elems1 = 0;
+	for (auto& n : fp)
+		sum_of_elems1 += n;
+	_fp.push_back(sum_of_elems1);
+	double sum_of_elems2 = 0;
+	for (auto& n : tp)
+		sum_of_elems2 += n;
+	_tn.push_back(sum_of_elems2);
+	double sum_of_elems3 = 0;
+	for (auto& n : fn)
+		sum_of_elems3 += n;
+	_fn.push_back(sum_of_elems3);
+//	_tp.push_back(mean<double>(tp));
+//	_fp.push_back(mean<double>(fp));
+//	_tn.push_back(mean<double>(tn));
+//	_fn.push_back(mean<double>(fn));
+	_matthewCC_perzone_individual.push_back(mean<double>(mccs));
 
     std::cout << "Mean precision " << mean<double>(precisions) << std::endl;
 	assert(std::isnan(mean<double>(precisions)) == false);
