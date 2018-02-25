@@ -83,8 +83,8 @@ namespace AASS{
 
                 _max.push_back(eval.getMax());
                 _min.push_back(eval.getMin());
-                _max.push_back(eval.getMaxPerZone());
-                _min.push_back(eval.getMinPerZone());
+                _max_perzone.push_back(eval.getMaxPerZone());
+                _min_perzone.push_back(eval.getMinPerZone());
                 
                 _matthewCC_perzone.push_back(eval.getMatthewsCCPerZone());
 			    _matthewCC_median_perzone.push_back(eval.getMatthewsCCMedianPerZone());
@@ -118,7 +118,7 @@ namespace AASS{
 
 					for(int i = 0 ; i < _mean_p.size() ; ++i){
 						
-						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _matthewCC_median[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _max[i] << " " << _min[i] << " " << _matthewCC_perzone[i] << " " << _matthewCC_median_perzone[i] << "\n";
+						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _matthewCC_median[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _max[i] << " " << _min[i] << " " << _matthewCC_perzone[i] << " " << _matthewCC_median_perzone[i] << " " << _max_perzone[i] << " " << _min_perzone[i] << "\n";
 						
 					}
 
