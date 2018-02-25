@@ -264,7 +264,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 //    SKETCHES
 //    eval.compare(graphmat, GT_segmentation, time, file);
 //    ROBOT MAPS
-    eval.compare(graphmat_straight, GT_segmentation, time, file);
+    eval.compare(graphmat, GT_segmentation, time, file);
 	std::cout << "SIZE " << eval.size() << std::endl;
 }
 
@@ -358,9 +358,9 @@ int main(int argc, char** argv) {
         //Threshold
         if (test_what == 1) {
             std::cout << "THRESHOLD" << std::endl;
-            t = 0.05;
+            t = 0;
             start = t;
-            step = 0.05;
+            step = 0.1;
             end = 1;
         }
         //Margin
@@ -368,23 +368,23 @@ int main(int argc, char** argv) {
             std::cout << "MARGIN" << std::endl;
             t = 0;
             start = t;
-            step = 0.05;
+            step = 0.1;
             end = 1;
         }
         //Ripples
         else if (test_what == 3) {
             std::cout << "RIPPLES" << std::endl;
-            t = 85;
+            t = 0;
             start = t;
-            step = 5;
-            end = 85;
+            step = 10;
+            end = 100;
         }
         //Doors
         else if (test_what == 4) {
             std::cout << "DOORS" << std::endl;
             t = 0;
             start = t;
-            step = 5;
+            step = 10;
             end = 100;
         } else {
             throw std::runtime_error("TOO FAR");
@@ -457,16 +457,16 @@ int main(int argc, char** argv) {
             std::string result_file;
 
             if (test_what == 1) {
-                result_file = "maoris_param_threshold_bormann.dat";
+                result_file = "maoris_param_threshold_sketch_corrected.dat";
             }
             if (test_what == 2) {
-                result_file = "maoris_param_margin_bormann.dat";
+                result_file = "maoris_param_margin_sketch.dat_corrected";
             }
             if (test_what == 3) {
-                result_file = "maoris_param_ripples_bormann.dat";
+                result_file = "maoris_param_ripples_sketch.dat_corrected";
             }
             if (test_what == 4) {
-                result_file = "maoris_param_doors_bormann.dat";
+                result_file = "maoris_param_doors_sketch.dat_corrected";
             }
 
             std::cout << "SIZE " << evalparam.size() << std::endl;

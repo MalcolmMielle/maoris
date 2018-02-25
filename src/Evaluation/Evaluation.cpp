@@ -162,6 +162,15 @@ void AASS::maoris::Evaluation::calculate()
     assert(_max_mcc <= 1);
     assert(_min_mcc >= -1);
     assert(_min_mcc <= 1);
+    
+    auto minmaxp = std::minmax_element(_matthewCC_perzone_individual.begin(), _matthewCC_perzone_individual.end());
+	_max_mcc_perzone = *(minmaxp.second);
+	_min_mcc_perzone = *(minmaxp.first);
+
+    assert(_max_mcc_perzone >= -1);
+    assert(_max_mcc_perzone <= 1);
+    assert(_min_mcc_perzone >= -1);
+    assert(_min_mcc_perzone <= 1);
 
 
 //	_min_mcc = std::min_element(_matthewCC_individual);

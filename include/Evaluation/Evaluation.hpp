@@ -304,6 +304,8 @@ namespace AASS{
 			
 			double _max_mcc;
 			double _min_mcc;
+			double _max_mcc_perzone;
+			double _min_mcc_perzone;
 			
 		public:
 			Evaluation(){}
@@ -325,6 +327,8 @@ namespace AASS{
 
 			double getMax(){return _max_mcc;}
 			double getMin(){return _min_mcc;}
+			double getMaxPerZone(){return _max_mcc_perzone;}
+			double getMinPerZone(){return _min_mcc_perzone;}
 			
 			void calculate();
 			
@@ -333,6 +337,8 @@ namespace AASS{
 			void exportAll(const std::string& file_out);
 			double getMatthewsCC(){return _matthewCC;};
             double getMatthewsCCMedian(){return _matthewCC_median;};
+			double getMatthewsCCPerZone(){return _matthewCC_perzone;};
+            double getMatthewsCCMedianPerZone(){return _matthewCC_median_perzone;};
             std::vector<double> getAllMatthewsCC(){return _matthewCC_individual;};
 			double getFscore(){return _f1score;}
 			double getGscore(){return _gscore;}
