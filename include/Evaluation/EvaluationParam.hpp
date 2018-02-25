@@ -21,12 +21,16 @@ namespace AASS{
 //			std::vector<double> _m_value;
 			std::vector<double> _matthewCC;
 			std::vector<double> _matthewCC_median;
+			std::vector<double> _matthewCC_perzone;
+			std::vector<double> _matthewCC_median_perzone;
 			std::vector<double> _sd_matthewCC;
 			std::vector<double> _gscore;
 			std::vector<double> _dor;
 			std::vector<double> _accuracy;
             std::vector<double> _max;
             std::vector<double> _min;
+            std::vector<double> _max_perzone;
+            std::vector<double> _min_perzone;
 
             std::vector<Evaluation> _evaluation;
 
@@ -79,6 +83,11 @@ namespace AASS{
 
                 _max.push_back(eval.getMax());
                 _min.push_back(eval.getMin());
+                _max.push_back(eval.getMaxPerZone());
+                _min.push_back(eval.getMinPerZone());
+                
+                _matthewCC_perzone.push_back(eval.getMatthewsCCPerZone());
+			    _matthewCC_median_perzone.push_back(eval.getMatthewsCCMedianPerZone());
 
                 _evaluation.push_back(eval);
 
@@ -95,7 +104,7 @@ namespace AASS{
 
                     //Basic info
                     myfile << "# start and step: " << start << " " << step << "\n";
-					myfile << "# mean_p mean_r mean_ir sd_p sd_r sd_ir f1_score g_score dor matthewsCC sd_mCC matthewsCCmedian accuracy variable max min\n";
+					myfile << "# mean_p mean_r mean_ir sd_p sd_r sd_ir f1_score g_score dor matthewsCC sd_mCC matthewsCCmedian accuracy variable max min mcc_perzone mcc_median_perzone\n";
 				}
 				else{
 					myfile.open (result_file, std::ios::out | std::ios::app);
@@ -109,7 +118,7 @@ namespace AASS{
 
 					for(int i = 0 ; i < _mean_p.size() ; ++i){
 						
-						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _matthewCC_median[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _max[i] << " " << _min[i] << "\n";
+						myfile << _mean_p[i] << " " << _mean_r[i] << " " << _mean_ir[i] << " " << _sd_p[i] << " " << _sd_r[i] << " " << _sd_ir[i] << " " << _f1_score[i] << " " << _gscore[i] << " " << _dor[i] << " " << _matthewCC[i] << " " << _sd_matthewCC[i] << " " << _matthewCC_median[i] << " " << _accuracy[i] << " " << _t_value[i] << " " << _max[i] << " " << _min[i] << " " << _matthewCC_perzone[i] << " " << _matthewCC_median_perzone[i] << "\n";
 						
 					}
 

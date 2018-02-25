@@ -374,10 +374,12 @@ int main(int argc, char** argv) {
         //Ripples
         else if (test_what == 3) {
             std::cout << "RIPPLES" << std::endl;
+
             t = 5;
             start = t;
             step = 10;
             end = 85;
+
         }
         //Doors
         else if (test_what == 4) {
