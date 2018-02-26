@@ -375,10 +375,10 @@ int main(int argc, char** argv) {
         else if (test_what == 3) {
             std::cout << "RIPPLES" << std::endl;
 
-            t = 5;
+            t = 0;
             start = t;
             step = 10;
-            end = 85;
+            end = 100;
 
         }
         //Doors
@@ -459,16 +459,16 @@ int main(int argc, char** argv) {
             std::string result_file;
 
             if (test_what == 1) {
-                result_file = "maoris_param_threshold_bormann_corrected.dat";
+                result_file = "maoris_param_threshold.dat";
             }
             if (test_what == 2) {
-                result_file = "maoris_param_margin_bormann_corrected.dat";
+                result_file = "maoris_param_margin.dat";
             }
             if (test_what == 3) {
-                result_file = "maoris_param_ripples_bormann_corrected.dat";
+                result_file = "maoris_param_ripples.dat";
             }
             if (test_what == 4) {
-                result_file = "maoris_param_doors_bormann_corrected.dat";
+                result_file = "maoris_param_doors.dat";
             }
 
             std::cout << "SIZE " << evalparam.size() << std::endl;
