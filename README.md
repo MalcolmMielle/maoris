@@ -49,6 +49,8 @@ After compilation, you will have those executables:
 
 ### For segmentation:
 
+* segmentation_live : use the webcam of your laptop to segment maps. Just take a picture of the map and its ground truth and there you go.
+
 * evaluation_2files_fodler : compare segmented images files from two folders
 
 * evaluation_gt : compare a map with a segmented ground truth image
