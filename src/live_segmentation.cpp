@@ -170,7 +170,7 @@ void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, c
 
 
 
-void process(const std::string& file, double t, double margin, double ripples, double doors){
+void process(const cv::Mat& slam_in_color, const cv::Mat& gt_in_color, double t, double margin, double ripples, double doors){
 
 	AASS::maoris::GraphZone graph_slam;
 	graph_slam.setThreshold(t);
@@ -178,14 +178,26 @@ void process(const std::string& file, double t, double margin, double ripples, d
 	graph_slam.setThresholdFusionRipples(ripples);
 	graph_slam.setThresholdFusionDoors(doors);
 	
-	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
-	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
-	cv::Mat slam = slam_in > 250;
+//	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+//	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
+
+	cv::Mat slam_in;
+	cv::cvtColor(slam_in_color, slam_in, cv::COLOR_BGR2GRAY);
+//	cv::imshow("map in", slam_in);
+//	cv::waitKey(0);
+	cv::Mat slam = slam_in > 100;
+
+	cv::Mat gt_in;
+	cv::cvtColor(gt_in_color, gt_in, cv::COLOR_BGR2GRAY);
+//	cv::waitKey(0);
+	cv::Mat gt = gt_in > 100;
+	cv::imshow("gt in", gt);
 	
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY);
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY_INV);
-// 	cv::imshow("map in", slam);
-// 	cv::waitKey(0);
+ 	cv::imshow("map in", slam);
+ 	cv::waitKey(0);
+//	cv::resize(slam, slam, cv::Size(slam.cols / 2, slam.rows / 2));
 	std::cout << "Input parameters " << t << std::endl;
 	std::cout << "T" << graph_slam.getT() << std::endl;
 	double time = 0;
@@ -203,17 +215,17 @@ void process(const std::string& file, double t, double margin, double ripples, d
 // 	graph_slam.update();
 
 	
-	cv::Mat slam1 = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
-    cv::Mat graphmat = cv::Mat::zeros(slam1.size(), CV_8U);
+//	cv::Mat slam1 = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat graphmat = cv::Mat::zeros(slam_in.size(), CV_8U);
     graph_slam.drawEvaluation(graphmat);
 
 // 	cv::Mat partial = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.drawPartial(partial);
 	
-// 	cv::Mat img_hist_equalized;
-// 	cv::equalizeHist(graphmat, img_hist_equalized);
+ 	cv::Mat img_hist_equalized;
+ 	cv::equalizeHist(graphmat, img_hist_equalized);
  // 	cv::resize(graphmat, graphmat, cv::Size(graphmat.cols * 2, graphmat.rows * 2));
-// 	cv::imshow("GRAPH", img_hist_equalized);
+ 	cv::imshow("segmentation", img_hist_equalized);
 // 	
 //     cv::Mat graphmat_vis = cv::Mat::zeros(slam1.size(), CV_8U);
 //     graph_slam.draw(graphmat_vis);
@@ -227,24 +239,32 @@ void process(const std::string& file, double t, double margin, double ripples, d
 	
 // 	std::cout << " GT " << full_path_GT << std::endl;
 // 	
-	cv::Mat image_GT = cv::imread(full_path_GT,0);
+//	cv::Mat image_GT = cv::imread(gt_path,0);
 // 	cv::imshow("GT raw", image_GT);
-// 	cv::waitKey(0);
+
 	
-	cv::Mat GT_segmentation = AASS::maoris::segment_Ground_Truth(image_GT);
-    /// THIS ONE IS USE IF YOU NEED STRAIGHTEN MAPS
+//	cv::Mat GT_segmentation = AASS::maoris::segment_Ground_Truth(image_GT);
+//    / THIS ONE IS USE IF YOU NEED STRAIGHTEN MAPS
 	cv::Mat graphmat_straight = AASS::maoris::segment_Ground_Truth(segmented_map);
 	
 // 	cv::Mat img_hist_equalizedgt;
 // 	cv::equalizeHist(GT_segmentation, img_hist_equalizedgt);
-// 	cv::imshow("GT", img_hist_equalizedgt);
-// 	cv::waitKey(0);
+ 	cv::imshow("segmentation straight", segmented_map);
+ 	cv::waitKey(0);
 
 //    SKETCHES
-//    eval.compare(graphmat, GT_segmentation, time, file);
+	AASS::maoris::Evaluation eval;
+    eval.compare(graphmat, gt, time, "camera_input");
+	eval.calculate();
 //    ROBOT MAPS
-    eval.compare(graphmat_straight, GT_segmentation, time, file);
-	std::cout << "SIZE " << eval.size() << std::endl;
+//	AASS::maoris::Evaluation eval;
+	AASS::maoris::Evaluation evals;
+    evals.compare(graphmat_straight, gt, time, "camera_inpu_s");
+	evals.calculate();
+//	std::cout << "SIZE " << eval.size() << std::endl;
+
+	std::cout << "Evaluation gave a score of " << eval.getMatthewsCCMedianPerZone() << " for the not straight segmentation, and " << evals.getMatthewsCCMedianPerZone() << " for the straight segmentation" << std::endl;
+
 }
 
 
@@ -308,6 +328,8 @@ int main(int argc, char** argv) {
     double margin = 0;
     double ripples = 0;
     double doors = 0;
+
+	std::string gt_path = "";
     
     std::cout << "Threshold : " << std::endl;
     std::cin >> threshold;
@@ -321,7 +343,7 @@ int main(int argc, char** argv) {
     if(!cap.open(0)){
         return 0;
     }
-    std::cout << "Welcome to the maoris test program.\n\n**** Press 1 to run maoris on the webcam image.\n**** Press 2 to change the parameters\nInput: " << std::endl;
+    std::cout << "Welcome to the maoris test program.\n\n**** Press space to run maoris on the webcam image.\n**** Press t, m, r, or d to change the parameters\nInput: " << std::endl;
     
     bool run = true;
     double input = 0;
@@ -335,25 +357,49 @@ int main(int argc, char** argv) {
         //PROCESS FRAME TODO
         
         cv::imshow("smile", frame);
-        if(waitKey(10) == 27) run = false; //Press esc to quit
-        if(waitKey(10) == 27) process(fn.string(), threshold, margin, ripples, doors);
-        if(waitKey(10) == 27){
-            std::cout << "Threshold : " << std::endl;
-            std::cin >> threshold;
-            std::cout << "Margin : " << std::endl;
-            std::cin >> margin;
-            std::cout << "Ripples : " << std::endl;
-            std::cin >> ripples;
+	    auto output = cv::waitKey(10);
+        if(output == 27){ std ::cout << "Quit " << std::endl; run = false;} //Press esc to quit
+        if(output == 32) {
+	        std::cout << "process" << std::endl;
+
+	        std::cout << "Please input the ground truth" << std::endl;
+	        auto output = cv::waitKey(10);
+	        cv::Mat gt;
+	        while(output != 32) {
+//		        std::cout << "diff" << std::endl;
+		        cap >> gt;
+		        cv::imshow("smile", gt);
+		        output = cv::waitKey(10);
+//		        std::cout << output << std::endl;
+	        }
+//	        if (output == 32) {
+	        process(frame, gt, threshold, margin, ripples, doors);
+//	        }
+        }
+        if(output == 116) {
+	        std::cout << "Threshold : " << std::endl;
+	        std::cin >> threshold;
+        }
+	    if(output == 109) {
+		    std::cout << "Margin : " << std::endl;
+		    std::cin >> margin;
+	    }
+	    if(output == 114) {
+		    std::cout << "Ripples : " << std::endl;
+		    std::cin >> ripples;
+	    }
+	    if(output == 100){
             std::cout << "Doors : " << std::endl;
             std::cin >> doors;
         }
-        
+
+//	    std::cout << "HOY" << std::endl;
     
     }
 
     //Read image
     
-    cap.close()
+//    cap.close();
     
     
     // Send process

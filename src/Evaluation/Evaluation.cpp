@@ -48,21 +48,22 @@ void AASS::maoris::Evaluation::compare(const cv::Mat& seg, const cv::Mat& GT_seg
 	/******** OR THIS************/
 	
 	compareImagesUnbiased(GT_segmentation, seg);
-	computeMeasures();
+//	computeMeasures();
+//	calculate();
 	
 	/********************/
 	
-	std::cout << "Compared" << std::endl;
+//	std::cout << "Compared" << std::endl;
 	
 // 	std::cout << "pixel prec " << pixel_precision << std::endl;				
-	std::cout << "Go for extract" << std::endl;
+//	std::cout << "Go for extract" << std::endl;
 	
 // 				extract_results(Regions, Precisions, Recalls, inverse_recall);
 	
 	
 //	std::cout << " OldFurniture Precision: " <<Regions.precision << " Recall: "<< Regions.recall << " Inverse recall " << Regions.inverse_recall << std::endl;
 	
-	std::cout << " No_Furniture Precision: " << _precision[_precision.size() - 1] << " Recall: "<< _recall[_precision.size() - 1] << " Inverse recall " << _inverse_recall[_precision.size() - 1] << " time: "<< _time[_precision.size() - 1] <<" Labels " << max <<"  size " << proper_size << std::endl;
+//	std::cout << " No_Furniture Precision: " << _precision[_precision.size() - 1] << " Recall: "<< _recall[_precision.size() - 1] << " Inverse recall " << _inverse_recall[_precision.size() - 1] << " time: "<< _time[_precision.size() - 1] <<" Labels " << max <<"  size " << proper_size << std::endl;
 	
 	
 }
@@ -86,12 +87,12 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	{
 		for(int i = 0 ; i < _precision.size() ; ++i){
 			
-			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _matthewCC_individual[i] << " " << _accuracy_individual[i] <<  " " << _matthewCC_perzone_individual[i] << " " << _tp[i] << " " << _tn[i] << " " << _fp[i] << " " << _fn[i] << "\n";
+			myfile << _name[i] << " " << _precision[i] << " " << _recall[i] << " " << _inverse_recall[i] << " " << _time[i] << " " << _labels[i] << " " << _proper_size[i] << " " << _f1_score_individual[i] << " " << _g_score_individual[i] << " " << _dor_individual[i] << " " << _accuracy_individual[i] <<  " " << _matthewCC_perzone_individual[i] << " " << _tp[i] << " " << _tn[i] << " " << _fp[i] << " " << _fn[i] << "\n";
 			
 		}
 		
 		myfile << "\n\n# precision_mean recall_mean inverse_recall_mean precision_sd recall_sd inverse_recall_sd time_mean f1_score g_score dor_score matthewCC sd_mCC matthiew_median accuracy mcc_perzonemean mcc_perzone_median\n";
-		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _matthewCC << " " << _sd_mCC << " " << _matthewCC_median << " " << _accuracy << " " << _matthewCC_perzone << " " << _matthewCC_median_perzone << "\n";
+		myfile << _mean_p << " " << _mean_r << " " << _mean_ir << " " << _sd_p << " " << _sd_r << " " << _sd_ir << " " << mean<double>(_time) << " " <<_f1score << " " << _gscore << " " << _dor << " " << _accuracy << " " << _matthewCC_perzone << " " << _matthewCC_median_perzone << "\n";
 		myfile.close();
 		
 		
@@ -100,29 +101,38 @@ void AASS::maoris::Evaluation::exportAll(const std::string& file_out)
 	
 }
 
-void AASS::maoris::Evaluation::computeMeasures()
-{
-	int i;
-	if(_matthewCC_individual.size() > 0){
-		i = _matthewCC_individual.size();
-	}
-	else{
-		i = 0;
-	}
-	for(i ; i < _precision.size() ; ++i){
-		_f1_score_individual.push_back(fscore<double>(_precision[i], _recall[i]));
-		_g_score_individual.push_back(gscore<double>(_precision[i], _recall[i]));
-		_matthewCC_individual.push_back(matthewCC<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
-		_dor_individual.push_back(DOR<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
-		_accuracy_individual.push_back(accuracy<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
-	}
-
-}
+//void AASS::maoris::Evaluation::computeMeasures()
+//{
+//	int i;
+//	if(_matthewCC_individual.size() > 0){
+//		i = _matthewCC_individual.size();
+//	}
+//	else{
+//		i = 0;
+//	}
+//	for(i ; i < _precision.size() ; ++i){
+//		_f1_score_individual.push_back(fscore<double>(_precision[i], _recall[i]));
+//		_g_score_individual.push_back(gscore<double>(_precision[i], _recall[i]));
+//		_matthewCC_individual.push_back(matthewCC<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+//		_dor_individual.push_back(DOR<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+//		_accuracy_individual.push_back(accuracy<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+//	}
+//
+//}
 
 
 
 void AASS::maoris::Evaluation::calculate()
 {
+
+	for(int i = 0 ; i < _precision.size() ; ++i){
+		_f1_score_individual.push_back(fscore<double>(_precision[i], _recall[i]));
+		_g_score_individual.push_back(gscore<double>(_precision[i], _recall[i]));
+//		_matthewCC_individual.push_back(matthewCC<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+		_dor_individual.push_back(DOR<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+		_accuracy_individual.push_back(accuracy<double>(_tp[i], _fp[i], _tn[i], _fn[i]));
+	}
+
 	_mean_p = mean<double>(_precision);
 	
 	assert(!std::isnan(_mean_p));
@@ -144,24 +154,24 @@ void AASS::maoris::Evaluation::calculate()
 	
 	_f1score = fscore<double>(_mean_p, _mean_r);
 	_gscore = gscore<double>(_mean_p, _mean_r);
-	_matthewCC = mean<double>(_matthewCC_individual);
-	_matthewCC_median = median<double>(_matthewCC_individual);
+//	_matthewCC = mean<double>(_matthewCC_individual);
+//	_matthewCC_median = median<double>(_matthewCC_individual);
 
 	_matthewCC_perzone = mean<double>(_matthewCC_perzone_individual);
 	_matthewCC_median_perzone = median<double>(_matthewCC_perzone_individual);
 
-	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
+//	_sd_mCC = sd<double>(variance<double>(_matthewCC_individual, _matthewCC));
 	_dor = mean<double>(_dor_individual);
 	_accuracy = mean<double>(_accuracy_individual);
 
-	auto minmax = std::minmax_element(_matthewCC_individual.begin(), _matthewCC_individual.end());
-	_max_mcc = *(minmax.second);
-	_min_mcc = *(minmax.first);
+//	auto minmax = std::minmax_element(_matthewCC_individual.begin(), _matthewCC_individual.end());
+//	_max_mcc = *(minmax.second);
+//	_min_mcc = *(minmax.first);
 
-    assert(_max_mcc >= -1);
-    assert(_max_mcc <= 1);
-    assert(_min_mcc >= -1);
-    assert(_min_mcc <= 1);
+//    assert(_max_mcc >= -1);
+//    assert(_max_mcc <= 1);
+//    assert(_min_mcc >= -1);
+//    assert(_min_mcc <= 1);
     
     auto minmaxp = std::minmax_element(_matthewCC_perzone_individual.begin(), _matthewCC_perzone_individual.end());
 	_max_mcc_perzone = *(minmaxp.second);

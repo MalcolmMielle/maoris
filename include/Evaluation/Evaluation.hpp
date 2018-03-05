@@ -280,7 +280,7 @@ namespace AASS{
 			//Also known as the fowlkes-mallows index
 			std::vector<double> _g_score_individual;
 			std::vector<double> _accuracy_individual;
-			std::vector<double> _matthewCC_individual;
+//			std::vector<double> _matthewCC_individual;
 			std::vector<double> _matthewCC_perzone_individual;
 			//Diagnostic odds ratio
 			std::vector<double> _dor_individual;
@@ -295,15 +295,18 @@ namespace AASS{
 			double _f1score;
 			double _gscore;
 			double _accuracy;
-			double _matthewCC;
-			double _matthewCC_median;
+			///@brief Matthew's correlation coefficient for the segmented map, calculated from the tp, fp, tn, fn. Not good because not normalized. DO NOT USE
+//			double _matthewCC;
+//			double _matthewCC_median;
+			///@brief Matthew's correlation coefficient for the segmented map, calculated for each zone individually.
 			double _matthewCC_perzone;
+			///@brief median Matthew's correlation coefficient for the segmented map, calculated for each zone individually.
 			double _matthewCC_median_perzone;
-			double _sd_mCC;
+//			double _sd_mCC;
 			double _dor;
 			
-			double _max_mcc;
-			double _min_mcc;
+//			double _max_mcc;
+//			double _min_mcc;
 			double _max_mcc_perzone;
 			double _min_mcc_perzone;
 			
@@ -323,30 +326,44 @@ namespace AASS{
 			double getSDPrecision(){return _sd_p;}
 			double getSDRecall(){return _sd_r;}
 			double getSDInverseRecall(){return _sd_ir;}
-			double getSDMatthewCC(){return _sd_mCC;}
+//			double getSDMatthewCC(){return _sd_mCC;}
 
-			double getMax(){return _max_mcc;}
-			double getMin(){return _min_mcc;}
+//			double getMax(){return _max_mcc;}
+//			double getMin(){return _min_mcc;}
 			double getMaxPerZone(){return _max_mcc_perzone;}
 			double getMinPerZone(){return _min_mcc_perzone;}
-			
+
+			/**
+			 * @brief Calculate all measures after all the segmentation have been compared.
+			 */
 			void calculate();
 			
 			size_t size(){return _precision.size();}
-			void compare(const cv::Mat& seg, const cv::Mat& GT_segmentation, double time, const std::string& file);
+			/**
+			 * @brief compare the segmentation input with a ground truth. Call this function for each segmented map in your dataset. Once it is done, use calculate().
+			 * @param seg The Mat that was segmented. Each zone with a value.
+			 * @param GT_segmentation The ground truth segmentation Mat. It needs to be the same size as the input. Each zone with a value
+			 * @param time The time taken to process the maps. Default is set to 0.
+			 * @param file Path to the file of the map that was processed. Default to "name.png"
+			 */
+			void compare(const cv::Mat& seg, const cv::Mat& GT_segmentation, double time = 0, const std::string& file = "name.png");
+			/**
+			 * @brief Export all data to a dat file for gnuplot
+			 * @param file_out name of the output file
+			 */
 			void exportAll(const std::string& file_out);
-			double getMatthewsCC(){return _matthewCC;};
-            double getMatthewsCCMedian(){return _matthewCC_median;};
+//			double getMatthewsCC(){return _matthewCC;};
+//            double getMatthewsCCMedian(){return _matthewCC_median;};
 			double getMatthewsCCPerZone(){return _matthewCC_perzone;};
             double getMatthewsCCMedianPerZone(){return _matthewCC_median_perzone;};
-            std::vector<double> getAllMatthewsCC(){return _matthewCC_individual;};
+            std::vector<double> getAllMatthewsCCPerZone(){return _matthewCC_perzone_individual;};
 			double getFscore(){return _f1score;}
 			double getGscore(){return _gscore;}
 			double getDOR(){return _dor;}
 			double getAccuracy(){return _accuracy;}
 			
 		private:
-			void computeMeasures();
+//			void computeMeasures();
 			void compareImagesUnbiased(cv::Mat GT_segmentation_in, cv::Mat DuDe_segmentation_in);
 			
 		};
