@@ -25,6 +25,8 @@
 #include "ZoneReducer.hpp"
 #include "Segmentor.hpp"
 #include "EvaluationParam.hpp"
+#include <chrono>
+#include <ctime>
 
 void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, const cv::Mat& obstacle, const cv::Mat& obstacle_model, std::vector< std::pair<AASS::maoris::GraphZone::Vertex, AASS::maoris::GraphZone::Vertex> > matches){
 	
@@ -169,8 +171,71 @@ void draw(AASS::maoris::GraphZone& gp_real, AASS::maoris::GraphZone& gp_model, c
 // }
 
 
+cv::Mat threshold_maps(cv::Mat& slam_in_color){
 
-void process(const cv::Mat& slam_in_color, const cv::Mat& gt_in_color, double t, double margin, double ripples, double doors){
+	cv::Mat slam;
+	bool not_good = true;
+	int step = 100;
+
+	while(not_good == true) {
+
+//		cv::Mat slam_in;
+//		cv::cvtColor(slam_in_color, slam_in, cv::COLOR_BGR2GRAY);
+//	cv::imshow("map in", slam_in);
+//	cv::waitKey(0);
+//		slam = slam_in > step;
+
+
+		cv::inRange(slam_in_color, cv::Scalar(step, 0, 0), cv::Scalar(255, 255, 255), slam);
+
+		cv::imshow("input", slam);
+//		cv::waitKey(0);
+
+//		cv::cvtColor(slam_tmp, slam, cv::COLOR_BGR2GRAY);
+
+		cv::Point seed(0, 0);
+//		int i = 0;
+//		int j = 0;
+//
+//		while (seed.x == -1 && i < slam.rows) {
+//			if (slam.at<uchar>(i, j) == 0) {
+//				seed.x = i;
+//				seed.y = j;
+//			}
+//			j++;
+//			if (j == slam.cols) {
+//				j = 0;
+//				i++;
+//			}
+//		}
+
+//		cv::Mat mask;
+//		cv::Canny(slam, mask, 100, 200);
+//		cv::copyMakeBorder(mask, mask, 1, 1, 1, 1, cv::BORDER_REPLICATE);
+//Fill mask with value 128
+		cv::floodFill(slam, seed, cv::Scalar(255) ,0, cv::Scalar(), cv::Scalar());
+		cv::floodFill(slam, seed, cv::Scalar(0) ,0, cv::Scalar(), cv::Scalar());
+
+		cv::imshow("Threhsold", slam);
+		auto output = cv::waitKey(0);
+		std::cout << "OUTPUT " << output << "and step " << step  << " and seed " << seed.x << " " << seed.y << std::endl;
+
+		if(output == 82){
+			step++;
+		}
+		else if(output == 84){
+			step--;
+		}
+		else {
+			not_good = false;
+		}
+	}
+	return slam;
+}
+
+
+
+void process(cv::Mat& slam_in, const cv::Mat& gt, double t, double margin, double ripples, double doors){
 
 	AASS::maoris::GraphZone graph_slam;
 	graph_slam.setThreshold(t);
@@ -181,29 +246,29 @@ void process(const cv::Mat& slam_in_color, const cv::Mat& gt_in_color, double t,
 //	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
 //	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
 
-	cv::Mat slam_in;
-	cv::cvtColor(slam_in_color, slam_in, cv::COLOR_BGR2GRAY);
-//	cv::imshow("map in", slam_in);
-//	cv::waitKey(0);
-	cv::Mat slam = slam_in > 100;
-
-	cv::Mat gt_in;
-	cv::cvtColor(gt_in_color, gt_in, cv::COLOR_BGR2GRAY);
-//	cv::waitKey(0);
-	cv::Mat gt = gt_in > 100;
-	cv::imshow("gt in", gt);
+//	cv::Mat slam_in;
+//	cv::cvtColor(slam_in_color, slam_in, cv::COLOR_BGR2GRAY);
+////	cv::imshow("map in", slam_in);
+////	cv::waitKey(0);
+//	cv::Mat slam = slam_in > 100;
+//
+//	cv::Mat gt;
+//	cv::cvtColor(gt_in_color, gt, cv::COLOR_BGR2GRAY);
+////	cv::waitKey(0);
+//	cv::Mat gt = gt_in > 100;
+//	cv::imshow("gt in", gt);
 	
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY);
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY_INV);
- 	cv::imshow("map in", slam);
+ 	cv::imshow("map in", slam_in);
  	cv::waitKey(0);
 //	cv::resize(slam, slam, cv::Size(slam.cols / 2, slam.rows / 2));
-	std::cout << "Input parameters " << t << std::endl;
-	std::cout << "T" << graph_slam.getT() << std::endl;
+//	std::cout << "Input parameters " << t << std::endl;
+//	std::cout << "T" << graph_slam.getT() << std::endl;
 	double time = 0;
 // 	makeGraph(slam, graph_slam, time);
 	AASS::maoris::Segmentor segmenteur;
-	time = segmenteur.segmentImage(slam, graph_slam);
+	time = segmenteur.segmentImage(slam_in, graph_slam);
 
     std::cout << "NB OF ZONES " << graph_slam.getNumVertices() << std::endl;
 
@@ -324,21 +389,21 @@ int main(int argc, char** argv) {
 
     cv::VideoCapture cap;
     //Choose param
-    double threshold = 0;
-    double margin = 0;
-    double ripples = 0;
-    double doors = 0;
+    double threshold = 0.3;
+    double margin = 0.1;
+    double ripples = 40;
+    double doors = 60;
 
 	std::string gt_path = "";
     
-    std::cout << "Threshold : " << std::endl;
-    std::cin >> threshold;
-    std::cout << "Margin : " << std::endl;
-    std::cin >> margin;
-    std::cout << "Ripples : " << std::endl;
-    std::cin >> ripples;
-    std::cout << "Doors : " << std::endl;
-    std::cin >> doors;
+    std::cout << "Threshold : 0.3 " << std::endl;
+//    std::cin >> threshold;
+    std::cout << "Margin : 0.1" << std::endl;
+//    std::cin >> margin;
+    std::cout << "Ripples : 40" << std::endl;
+//    std::cin >> ripples;
+    std::cout << "Doors : 60" << std::endl;
+//    std::cin >> doors;
     
     if(!cap.open(0)){
         return 0;
@@ -362,6 +427,16 @@ int main(int argc, char** argv) {
         if(output == 32) {
 	        std::cout << "process" << std::endl;
 
+	        frame = threshold_maps(frame);
+
+	        auto time = std::chrono::system_clock::now();
+	        std::time_t end_time = std::chrono::system_clock::to_time_t(time);
+	        std::string date = std::ctime(&end_time);
+	        date.pop_back();
+//	        std::string date_sketch = date + ".png";
+	        std::cout << "Saving file to " << date << std::endl;
+	        cv::imwrite(date + ".png", frame);
+
 	        std::cout << "Please input the ground truth" << std::endl;
 	        auto output = cv::waitKey(10);
 	        cv::Mat gt;
@@ -372,6 +447,8 @@ int main(int argc, char** argv) {
 		        output = cv::waitKey(10);
 //		        std::cout << output << std::endl;
 	        }
+	        gt = threshold_maps(gt);
+	        cv::imwrite(date + "_gt.png", gt);
 //	        if (output == 32) {
 	        process(frame, gt, threshold, margin, ripples, doors);
 //	        }

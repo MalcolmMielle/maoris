@@ -3,7 +3,7 @@
 double AASS::maoris::Segmentor::segmentImage(cv::Mat& src, AASS::maoris::GraphZone& graph_src)
 {
 					
-	std::cout << "T" << graph_src.getT() << std::endl;
+//	std::cout << "T" << graph_src.getT() << std::endl;
 	
 //Draw the outer contours
 	cv::Mat outer;

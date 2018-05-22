@@ -76,8 +76,8 @@ namespace AASS{
 			
 			void setThreshold(double t){if(t >= 0 && t<= 1){_threshold = t;}else{throw std::runtime_error("Threhsold needs to be between 0 and 1");}}
 			void setMargin(double m){if(m >= 0 && m<= 1){_margin_factor = m;}else{throw std::runtime_error("Margin needs to be between 0 and 1");}}
-			double setThresholdFusionRipples(double t){ _threshold_fusion_ripples = t;}
-			double setThresholdFusionDoors(double t){ _threshold_fusion_doors = t;}
+			void setThresholdFusionRipples(double t){ _threshold_fusion_ripples = t;}
+			void setThresholdFusionDoors(double t){ _threshold_fusion_doors = t;}
 			
 			double getT(){return _threshold;}
 			double getMargin(){return _margin_factor;}
