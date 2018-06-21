@@ -34,6 +34,9 @@ target_link_libraries(evaluation_2files_folder ${OpenCV_LIBS} ${vodigrex_LIBRARI
 add_executable(live_segmentation live_segmentation.cpp)
 target_link_libraries(live_segmentation ${OpenCV_LIBS} ${vodigrex_LIBRARIES} MAORIS Evaluation -lboost_filesystem -lboost_system)
 
+add_executable(segmentation segmentation.cpp)
+target_link_libraries(segmentation ${OpenCV_LIBS} ${vodigrex_LIBRARIES} MAORIS Evaluation -lboost_filesystem -lboost_system)
+
 # add_executable(thermal_segmentation thermal_segmentation.cpp)
 # target_link_libraries(thermal_segmentation ${OpenCV_LIBS} ${vodigrex_LIBRARIES} MAORIS -lboost_unit_test_framework -lboost_filesystem -lboost_system hungarian_lib)
 
