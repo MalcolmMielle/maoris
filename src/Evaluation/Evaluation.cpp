@@ -751,7 +751,7 @@ cv::Mat AASS::maoris::segment_Ground_Truth(cv::Mat GroundTruth_BW)
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Vec4i> hierarchy;
 	
-	cv::findContours( src, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+	cv::findContours( src, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE );
 
 	
 	// iterate through all the top-level contours,
@@ -766,7 +766,7 @@ cv::Mat AASS::maoris::segment_Ground_Truth(cv::Mat GroundTruth_BW)
 	for( ; idx >= 0; idx = hierarchy[idx][0] )
 	{
 // 		std::cout << "Contour" << std::endl;
-		cv::drawContours( drawing, contours, idx, count , CV_FILLED, 8, hierarchy );
+		cv::drawContours( drawing, contours, idx, count , cv::FILLED, 8, hierarchy );
 // 		std::cout << drawing << std::endl;
 		all_vals.push_back(count);
 // 		cv::imshow("Contours", drawing);

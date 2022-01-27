@@ -172,8 +172,8 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 
 // 	AASS::maoris::GraphZone graph_slam;
 	
-	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
-	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
+	cv::Mat slam_in = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
+	assert(cv::ImreadModes::IMREAD_GRAYSCALE == 0);
 	
 // 	cv::Mat graphmat = AASS::maoris::segment_Ground_Truth(slam_in);
 

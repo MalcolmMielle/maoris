@@ -177,8 +177,8 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	graph_slam.setThresholdFusionRipples(40);
 	graph_slam.setThresholdFusionDoors(40);
 	
-	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
-	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
+	cv::Mat slam_in = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
+	assert(cv::ImreadModes::IMREAD_GRAYSCALE == 0);
 	cv::Mat slam = slam_in > 250;
 	
 // 	cv::threshold(slam, slam, 20, 255, cv::THRESH_BINARY);
@@ -199,7 +199,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 // 	graph_slam.update();
 
 	
-	cv::Mat slam1 = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat slam1 = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
     cv::Mat graphmat = cv::Mat::zeros(slam1.size(), CV_8U);
     graph_slam.drawEvaluation(graphmat);
 	
@@ -240,7 +240,7 @@ void process(const std::string& file, const std::string& full_path_GT, AASS::mao
 	
 	if(write == true){
 		std::vector<int> param;
-		param.push_back(CV_IMWRITE_PNG_COMPRESSION);
+		param.push_back(cv::IMWRITE_PNG_COMPRESSION);
 		param.push_back(9);
 		boost::filesystem::path p(file);
 		std::string name = p.filename().stem().string();

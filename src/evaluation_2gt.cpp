@@ -114,7 +114,7 @@ cv::Mat segment_Ground_Truth(cv::Mat GroundTruth_BW){
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Vec4i> hierarchy;
 	
-	cv::findContours( src, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+	cv::findContours( src, contours, hierarchy, cv::RETR_CCOMP, cv::CHAIN_APPROX_SIMPLE );
 
 	
 	// iterate through all the top-level contours,
@@ -129,7 +129,7 @@ cv::Mat segment_Ground_Truth(cv::Mat GroundTruth_BW){
 	for( ; idx >= 0; idx = hierarchy[idx][0] )
 	{
 		std::cout << "Contour" << std::endl;
-		cv::drawContours( drawing, contours, idx, color*count , CV_FILLED, 8, hierarchy );
+		cv::drawContours( drawing, contours, idx, color*count , cv::FILLED, 8, hierarchy );
 // 		std::cout << drawing << std::endl;
 		all_vals.push_back(color*count);
 // 		cv::imshow("Contours", drawing);
@@ -427,8 +427,8 @@ BOOST_AUTO_TEST_CASE(trying)
 // 	std::string file = "../../Test/Thermal/cold.jpg";
 	AASS::maoris::GraphZone graph_slam;
 	
-	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
-	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
+	cv::Mat slam_in = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
+	assert(cv::ImreadModes::IMREAD_GRAYSCALE == 0);
 	cv::imshow("GT raw", slam_in);
 	cv::waitKey(0);
 	

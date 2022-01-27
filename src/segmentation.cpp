@@ -376,8 +376,8 @@ int main(int argc, char** argv) {
 
     std::string path_file = argv[1];
     
-    cv::Mat framei = cv::imread(path_file, CV_LOAD_IMAGE_GRAYSCALE);
-	assert(CV_LOAD_IMAGE_GRAYSCALE == 0);
+    cv::Mat framei = cv::imread(path_file, cv::ImreadModes::IMREAD_GRAYSCALE);
+	assert(cv::ImreadModes::IMREAD_GRAYSCALE == 0);
 	cv::Mat frame = framei > 250;
     
     //Choose param

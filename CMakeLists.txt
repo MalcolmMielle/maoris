@@ -23,7 +23,11 @@ endif()
 
 add_definitions(-std=c++11)
 
-include_directories(include ${vodigrex_INCLUDE_DIRS} include/Evaluation)
+include_directories(include
+  ${vodigrex_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  include/Evaluation
+  )
 
 add_subdirectory(src)
 
