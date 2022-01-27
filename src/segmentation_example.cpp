@@ -22,7 +22,7 @@ void makeGraph(const std::string& file, AASS::maoris::GraphZone& graph_slam){
 	
 	++i ;
 	
-	cv::Mat slam_in = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat slam_in = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
 	cv::Mat slam = slam_in > 250;
 // 	
 // 	cv::imshow("input", slam);
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(trying)
 	AASS::maoris::GraphZone graph_slam;
 	makeGraph(file, graph_slam);
 	
-	cv::Mat slam1 = cv::imread(file, CV_LOAD_IMAGE_GRAYSCALE);
+	cv::Mat slam1 = cv::imread(file, cv::ImreadModes::IMREAD_GRAYSCALE);
 		
 	/********** PCA of all zones in Graph and removing the ripples **********/
 	

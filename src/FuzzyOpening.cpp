@@ -71,7 +71,7 @@ void AASS::maoris::FuzzyOpening::fuzzyOpening(const cv::Mat& src, cv::Mat& outpu
 	cv::Mat distance_image, label;
 	if(src.channels() == 3){
 		std::cout << "Convert" << std::endl;
-		cv::cvtColor(src, distance_image, CV_RGB2GRAY);
+		cv::cvtColor(src, distance_image, cv::COLOR_RGB2GRAY);
 	}
 	else{
 		src.copyTo(distance_image);
@@ -81,7 +81,7 @@ void AASS::maoris::FuzzyOpening::fuzzyOpening(const cv::Mat& src, cv::Mat& outpu
 	
 	//I should do it here because it can lead to problem later when certain point in original map are forgotten
 // 	cv::threshold(distance_image, distance_image, 50, 255, CV_THRESH_BINARY_INV);
-	cv::distanceTransform(distance_image, distance_image, label, CV_DIST_L2, CV_DIST_MASK_PRECISE, CV_DIST_LABEL_CCOMP);
+	cv::distanceTransform(distance_image, distance_image, label, cv::DIST_L2, cv::DIST_MASK_PRECISE, cv::DIST_LABEL_CCOMP);
 // 	std::cout << " TYPE " << type2str(distance_image.type()) << std::endl;	
 	CV_Assert(distance_image.depth() == CV_32F);
 	

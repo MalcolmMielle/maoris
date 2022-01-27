@@ -202,7 +202,7 @@ void AASS::maoris::Segmentor::addHoles(const cv::Mat& src, std::vector< std::vec
 	for(int i = 0 ; i < contours.size() ; ++i)
 	{
 		if(hierarchy[i][3] != -1){
-			cv::drawContours( drawing, contours, i, 255 , CV_FILLED, 8, hierarchy );
+			cv::drawContours( drawing, contours, i, 255 , cv::FILLED, 8, hierarchy );
 		}
 	}
 	

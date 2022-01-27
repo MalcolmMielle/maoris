@@ -8,7 +8,7 @@ void AASS::maoris::Zone::updateContour()
 	
 	std::vector< std::vector< cv::Point> > contours;
 	std::vector<cv::Vec4i> hierarchy;
-	cv::findContours(copy_tmp, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
+	cv::findContours(copy_tmp, contours, hierarchy, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
 	
 // 				assert(contours.size() >= 1 && "More than one shape in Zone");
 	
