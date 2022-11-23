@@ -7,7 +7,7 @@ import math
 class Reader:
     def __init__(self):
         self.time = list()
-    
+
     def read(self, file_name):
         f = open(file_name, 'r')
         for line in f:
@@ -22,7 +22,7 @@ class Reader:
                     if count > 0:
                         flag = False
                     count += 1
-    
+
     def mean_time(self):
         sum = 0
         for el in self.time:
