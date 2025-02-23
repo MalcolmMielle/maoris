@@ -2,6 +2,9 @@
 
 Cutting most types of maps in smaller more meaningful bits.
 
+> UPDATE: THere is now a Rust/Python version that is _much_ faster; running in 0.5sec for larger maps than this repo.
+> You can can find it on [Codeberg](https://codeberg.org/MalcolmMielle/maoris-rs)
+
 ## Description
 
 This program segment maps in semantically meaningful parts, such as rooms and corridors. It has been tested on robot build maps and sketch maps, but the principle can easily be extended to other type of maps such as city maps.
