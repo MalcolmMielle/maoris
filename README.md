@@ -2,7 +2,7 @@
 
 Cutting most types of maps in smaller more meaningful bits.
 
-> UPDATE: THere is now a Rust/Python version that is _much_ faster; running in 0.5sec for larger maps than this repo.
+> UPDATE: There is now a Rust/Python version that is _much_ faster; running in 0.5sec for larger maps than this repo.
 > You can can find it on [Codeberg](https://codeberg.org/MalcolmMielle/maoris-rs)
 
 ## Description
